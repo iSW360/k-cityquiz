@@ -92,6 +92,24 @@
     Presented by Shop Elena
 </a>
 
+        <section class="mt-10 pt-6 border-t border-gray-100 w-full">
+            <h3 class="text-lg font-bold text-gray-800 mb-6 text-center">댓글 및 피드백</h3>
+            <div id="disqus_thread"></div>
+            <script>
+                var disqus_config = function () {
+                    this.page.url = window.location.href;
+                    this.page.identifier = 'k-cityquiz-seoul';
+                };
+                (function() {
+                    var d = document, s = d.createElement('script');
+                    s.src = 'https://k-cityquiz.disqus.com/embed.js';
+                    s.setAttribute('data-timestamp', +new Date());
+                    (d.head || d.body).appendChild(s);
+                })();
+            </script>
+            <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        </section>
+
         <footer class="mt-8 text-center">
             <p class="text-xs text-gray-400">
                 지도 타일: &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" class="underline hover:text-blue-600">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" class="underline hover:text-blue-600">CARTO</a>.

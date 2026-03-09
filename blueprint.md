@@ -16,6 +16,7 @@ A web-based interactive quiz game where users identify South Korean cities and S
 - **Visuals**: Tailwind CSS for responsive and modern UI. Gradient backgrounds, soft shadows, and vibrant colors.
 - **Interactivity**: Dynamic feedback for correct/incorrect answers, region highlighting on the map.
 - **Inquiry Form**: Integrated Formspree for partnership inquiries at the bottom of the main page.
+- **Comments**: Integrated Disqus comment section at the bottom of both main and Seoul quiz pages.
 - **Responsiveness**: Mobile-friendly layout.
 
 ## Planned Change: Seoul District Quiz
