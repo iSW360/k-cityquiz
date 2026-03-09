@@ -19,31 +19,31 @@ let geoJsonLayer;
 
 // --- 서울 구 데이터 ---
 const locations = [
-    { name: "종로구", lat: 37.5730, lng: 126.9794, zoom: 12, geoName: "종로구" },
-    { name: "중구", lat: 37.5641, lng: 126.9979, zoom: 12, geoName: "중구" },
-    { name: "용산구", lat: 37.5326, lng: 126.9904, zoom: 12, geoName: "용산구" },
-    { name: "성동구", lat: 37.5633, lng: 127.0371, zoom: 12, geoName: "성동구" },
-    { name: "광진구", lat: 37.5385, lng: 127.0824, zoom: 12, geoName: "광진구" },
-    { name: "동대문구", lat: 37.5744, lng: 127.0400, zoom: 12, geoName: "동대문구" },
-    { name: "중랑구", lat: 37.6065, lng: 127.0927, zoom: 12, geoName: "중랑구" },
-    { name: "성북구", lat: 37.5891, lng: 127.0182, zoom: 12, geoName: "성북구" },
-    { name: "강북구", lat: 37.6396, lng: 127.0257, zoom: 12, geoName: "강북구" },
-    { name: "도봉구", lat: 37.6688, lng: 127.0471, zoom: 12, geoName: "도봉구" },
-    { name: "노원구", lat: 37.6542, lng: 127.0568, zoom: 12, geoName: "노원구" },
-    { name: "은평구", lat: 37.6027, lng: 126.9291, zoom: 12, geoName: "은평구" },
-    { name: "서대문구", lat: 37.5791, lng: 126.9368, zoom: 12, geoName: "서대문구" },
-    { name: "마포구", lat: 37.5662, lng: 126.9016, zoom: 12, geoName: "마포구" },
-    { name: "양천구", lat: 37.5169, lng: 126.8665, zoom: 12, geoName: "양천구" },
-    { name: "강서구", lat: 37.5509, lng: 126.8495, zoom: 12, geoName: "강서구" },
-    { name: "구로구", lat: 37.4954, lng: 126.8875, zoom: 12, geoName: "구로구" },
-    { name: "금천구", lat: 37.4568, lng: 126.8952, zoom: 12, geoName: "금천구" },
-    { name: "영등포구", lat: 37.5264, lng: 126.8962, zoom: 12, geoName: "영등포구" },
-    { name: "동작구", lat: 37.5124, lng: 126.9395, zoom: 12, geoName: "동작구" },
-    { name: "관악구", lat: 37.4784, lng: 126.9515, zoom: 12, geoName: "관악구" },
-    { name: "서초구", lat: 37.4837, lng: 127.0324, zoom: 12, geoName: "서초구" },
-    { name: "강남구", lat: 37.4959, lng: 127.0664, zoom: 12, geoName: "강남구" },
-    { name: "송파구", lat: 37.5145, lng: 127.1061, zoom: 12, geoName: "송파구" },
-    { name: "강동구", lat: 37.5301, lng: 127.1238, zoom: 12, geoName: "강동구" }
+    { name: "종로구", lat: 37.5730, lng: 126.9794, zoom: 11, geoName: "종로구" },
+    { name: "중구", lat: 37.5641, lng: 126.9979, zoom: 11, geoName: "중구" },
+    { name: "용산구", lat: 37.5326, lng: 126.9904, zoom: 11, geoName: "용산구" },
+    { name: "성동구", lat: 37.5633, lng: 127.0371, zoom: 11, geoName: "성동구" },
+    { name: "광진구", lat: 37.5385, lng: 127.0824, zoom: 11, geoName: "광진구" },
+    { name: "동대문구", lat: 37.5744, lng: 127.0400, zoom: 11, geoName: "동대문구" },
+    { name: "중랑구", lat: 37.6065, lng: 127.0927, zoom: 11, geoName: "중랑구" },
+    { name: "성북구", lat: 37.5891, lng: 127.0182, zoom: 11, geoName: "성북구" },
+    { name: "강북구", lat: 37.6396, lng: 127.0257, zoom: 11, geoName: "강북구" },
+    { name: "도봉구", lat: 37.6688, lng: 127.0471, zoom: 11, geoName: "도봉구" },
+    { name: "노원구", lat: 37.6542, lng: 127.0568, zoom: 11, geoName: "노원구" },
+    { name: "은평구", lat: 37.6027, lng: 126.9291, zoom: 11, geoName: "은평구" },
+    { name: "서대문구", lat: 37.5791, lng: 126.9368, zoom: 11, geoName: "서대문구" },
+    { name: "마포구", lat: 37.5662, lng: 126.9016, zoom: 11, geoName: "마포구" },
+    { name: "양천구", lat: 37.5169, lng: 126.8665, zoom: 11, geoName: "양천구" },
+    { name: "강서구", lat: 37.5509, lng: 126.8495, zoom: 11, geoName: "강서구" },
+    { name: "구로구", lat: 37.4954, lng: 126.8875, zoom: 11, geoName: "구로구" },
+    { name: "금천구", lat: 37.4568, lng: 126.8952, zoom: 11, geoName: "금천구" },
+    { name: "영등포구", lat: 37.5264, lng: 126.8962, zoom: 11, geoName: "영등포구" },
+    { name: "동작구", lat: 37.5124, lng: 126.9395, zoom: 11, geoName: "동작구" },
+    { name: "관악구", lat: 37.4784, lng: 126.9515, zoom: 11, geoName: "관악구" },
+    { name: "서초구", lat: 37.4837, lng: 127.0324, zoom: 11, geoName: "서초구" },
+    { name: "강남구", lat: 37.4959, lng: 127.0664, zoom: 11, geoName: "강남구" },
+    { name: "송파구", lat: 37.5145, lng: 127.1061, zoom: 11, geoName: "송파구" },
+    { name: "강동구", lat: 37.5301, lng: 127.1238, zoom: 11, geoName: "강동구" }
 ];
 
 let shuffledGameLocations = [];
@@ -52,7 +52,7 @@ let score = 0;
 let correctAnswerName = '';
 let numOptions = 4;
 const MAX_QUESTIONS_PER_GAME = 10;
-const PROVINCE_VIEW_ZOOM = 11; // 서울 전체 중심 줌
+const PROVINCE_VIEW_ZOOM = 10; // 서울 전체 중심 줌
 const CITY_VIEW_DELAY = 1000;
 
 function getColorForRegion(name) {
@@ -201,7 +201,7 @@ function loadQuestion() {
     map.setView([37.5665, 126.9780], PROVINCE_VIEW_ZOOM);
     
     setTimeout(() => {
-        if (map) map.flyTo(latLng, currentLocation.zoom || 12, {duration: 1}); 
+        if (map) map.flyTo(latLng, currentLocation.zoom || 11, {duration: 1}); 
     }, CITY_VIEW_DELAY);
     
     optionsArea.innerHTML = ''; 
