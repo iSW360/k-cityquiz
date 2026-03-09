@@ -24,31 +24,31 @@ let hintsRemaining = 3;
 
 // --- 서울 구 데이터 (힌트 추가) ---
 const locations = [
-    { name: "종로구", lat: 37.5730, lng: 126.9794, zoom: 11, geoName: "종로구", hint: "경복궁과 청와대, 광화문 광장이 있는 서울의 역사 중심지" },
-    { name: "중구", lat: 37.5641, lng: 126.9979, zoom: 11, geoName: "중구", hint: "남산타워와 명동, 동대문 디자인 플라자(DDP)가 있는 곳" },
-    { name: "용산구", lat: 37.5326, lng: 126.9904, zoom: 11, geoName: "용산구", hint: "국립중앙박물관과 이태원, 용산공원이 위치한 곳" },
-    { name: "성동구", lat: 37.5633, lng: 127.0371, zoom: 11, geoName: "성동구", hint: "서울숲과 수제화 거리로 유명한 성수동이 있는 곳" },
-    { name: "광진구", lat: 37.5385, lng: 127.0824, zoom: 11, geoName: "광진구", hint: "어린이대공원과 뚝섬 한강공원, 건대입구가 유명함" },
-    { name: "동대문구", lat: 37.5744, lng: 127.0400, zoom: 11, geoName: "동대문구", hint: "경동시장(한약재)과 시립대학교, 외대가 위치한 곳" },
-    { name: "중랑구", lat: 37.6065, lng: 127.0927, zoom: 11, geoName: "중랑구", hint: "장미축제가 열리는 중랑천과 용마산이 유명한 곳" },
-    { name: "성북구", lat: 37.5891, lng: 127.0182, zoom: 11, geoName: "성북구", hint: "북한산 자락 아래 대사관저와 고려대학교가 있는 곳" },
-    { name: "강북구", lat: 37.6396, lng: 127.0257, zoom: 11, geoName: "강북구", hint: "북한산 국립공원의 입구와 '북서울 꿈의 숲'이 있는 곳" },
-    { name: "도봉구", lat: 37.6688, lng: 127.0471, zoom: 11, geoName: "도봉구", hint: "도봉산과 둘리뮤지엄이 있는 서울 북단의 구" },
-    { name: "노원구", lat: 37.6542, lng: 127.0568, zoom: 11, geoName: "노원구", hint: "불암산과 수락산, 그리고 교육열이 높은 중계동 학원가" },
-    { name: "은평구", lat: 37.6027, lng: 126.9291, zoom: 11, geoName: "은평구", hint: "진관사와 북한산 한옥마을이 조성된 쾌적한 주거지" },
-    { name: "서대문구", lat: 37.5791, lng: 126.9368, zoom: 11, geoName: "서대문구", hint: "독립문과 서대문형무소 역사관, 연세대학교가 있는 곳" },
-    { name: "마포구", lat: 37.5662, lng: 126.9016, zoom: 11, geoName: "마포구", hint: "홍대 거리와 망원동, 상암 월드컵경기장이 유명함" },
-    { name: "양천구", lat: 37.5169, lng: 126.8665, zoom: 11, geoName: "양천구", hint: "목동 신시가지와 SBS 방송국이 위치한 교육 중심지" },
-    { name: "강서구", lat: 37.5509, lng: 126.8495, zoom: 11, geoName: "강서구", hint: "김포공항과 마곡지구(서울식물원)가 있는 서울 서부 관문" },
-    { name: "구로구", lat: 37.4954, lng: 126.8875, zoom: 11, geoName: "구로구", hint: "과거 공단에서 IT 벤처 중심지(디지털단지)로 탈바꿈한 곳" },
-    { name: "금천구", lat: 37.4568, lng: 126.8952, zoom: 11, geoName: "금천구", hint: "가산디지털단지와 아울렛 쇼핑몰이 밀집한 남서부의 구" },
-    { name: "영등포구", lat: 37.5264, lng: 126.8962, zoom: 11, geoName: "영등포구", hint: "여의도 국회의사당과 금융가, 63빌딩이 있는 곳" },
-    { name: "동작구", lat: 37.5124, lng: 126.9395, zoom: 11, geoName: "동작구", hint: "국립서울현충원과 노량진 수산시장이 매우 유명함" },
-    { name: "관악구", lat: 37.4784, lng: 126.9515, zoom: 11, geoName: "관악구", hint: "서울대학교와 관악산 등산로가 있는 남부의 구" },
-    { name: "서초구", lat: 37.4837, lng: 127.0324, zoom: 11, geoName: "서초구", hint: "예술의전당과 대법원, 강남터미널이 위치한 곳" },
-    { name: "강남구", lat: 37.4959, lng: 127.0664, zoom: 11, geoName: "강남구", hint: "코엑스와 가로수길, 압구정 로데오 거리가 있는 트렌드 중심지" },
-    { name: "송파구", lat: 37.5145, lng: 127.1061, zoom: 11, geoName: "송파구", hint: "롯데월드타워와 석촌호수, 올림픽공원이 있는 관광 명소" },
-    { name: "강동구", lat: 37.5301, lng: 127.1238, zoom: 11, geoName: "강동구", hint: "암사동 선사유적지와 허브천문공원이 있는 주거 지역" }
+    { name: "종로구", lat: 37.5730, lng: 126.9794, zoom: 10, geoName: "종로구", hint: "경복궁과 청와대, 광화문 광장이 있는 서울의 역사 중심지" },
+    { name: "중구", lat: 37.5641, lng: 126.9979, zoom: 10, geoName: "중구", hint: "남산타워와 명동, 동대문 디자인 플라자(DDP)가 있는 곳" },
+    { name: "용산구", lat: 37.5326, lng: 126.9904, zoom: 10, geoName: "용산구", hint: "국립중앙박물관과 이태원, 용산공원이 위치한 곳" },
+    { name: "성동구", lat: 37.5633, lng: 127.0371, zoom: 10, geoName: "성동구", hint: "서울숲과 수제화 거리로 유명한 성수동이 있는 곳" },
+    { name: "광진구", lat: 37.5385, lng: 127.0824, zoom: 10, geoName: "광진구", hint: "어린이대공원과 뚝섬 한강공원, 건대입구가 유명함" },
+    { name: "동대문구", lat: 37.5744, lng: 127.0400, zoom: 10, geoName: "동대문구", hint: "경동시장(한약재)과 시립대학교, 외대가 위치한 곳" },
+    { name: "중랑구", lat: 37.6065, lng: 127.0927, zoom: 10, geoName: "중랑구", hint: "장미축제가 열리는 중랑천과 용마산이 유명한 곳" },
+    { name: "성북구", lat: 37.5891, lng: 127.0182, zoom: 10, geoName: "성북구", hint: "북한산 자락 아래 대사관저와 고려대학교가 있는 곳" },
+    { name: "강북구", lat: 37.6396, lng: 127.0257, zoom: 10, geoName: "강북구", hint: "북한산 국립공원의 입구와 '북서울 꿈의 숲'이 있는 곳" },
+    { name: "도봉구", lat: 37.6688, lng: 127.0471, zoom: 10, geoName: "도봉구", hint: "도봉산과 둘리뮤지엄이 있는 서울 북단의 구" },
+    { name: "노원구", lat: 37.6542, lng: 127.0568, zoom: 10, geoName: "노원구", hint: "불암산과 수락산, 그리고 교육열이 높은 중계동 학원가" },
+    { name: "은평구", lat: 37.6027, lng: 126.9291, zoom: 10, geoName: "은평구", hint: "진관사와 북한산 한옥마을이 조성된 쾌적한 주거지" },
+    { name: "서대문구", lat: 37.5791, lng: 126.9368, zoom: 10, geoName: "서대문구", hint: "독립문과 서대문형무소 역사관, 연세대학교가 있는 곳" },
+    { name: "마포구", lat: 37.5662, lng: 126.9016, zoom: 10, geoName: "마포구", hint: "홍대 거리와 망원동, 상암 월드컵경기장이 유명함" },
+    { name: "양천구", lat: 37.5169, lng: 126.8665, zoom: 10, geoName: "양천구", hint: "목동 신시가지와 SBS 방송국이 위치한 교육 중심지" },
+    { name: "강서구", lat: 37.5509, lng: 126.8495, zoom: 10, geoName: "강서구", hint: "김포공항과 마곡지구(서울식물원)가 있는 서울 서부 관문" },
+    { name: "구로구", lat: 37.4954, lng: 126.8875, zoom: 10, geoName: "구로구", hint: "과거 공단에서 IT 벤처 중심지(디지털단지)로 탈바꿈한 곳" },
+    { name: "금천구", lat: 37.4568, lng: 126.8952, zoom: 10, geoName: "금천구", hint: "가산디지털단지와 아울렛 쇼핑몰이 밀집한 남서부의 구" },
+    { name: "영등포구", lat: 37.5264, lng: 126.8962, zoom: 10, geoName: "영등포구", hint: "여의도 국회의사당과 금융가, 63빌딩이 있는 곳" },
+    { name: "동작구", lat: 37.5124, lng: 126.9395, zoom: 10, geoName: "동작구", hint: "국립서울현충원과 노량진 수산시장이 매우 유명함" },
+    { name: "관악구", lat: 37.4784, lng: 126.9515, zoom: 10, geoName: "관악구", hint: "서울대학교와 관악산 등산로가 있는 남부의 구" },
+    { name: "서초구", lat: 37.4837, lng: 127.0324, zoom: 10, geoName: "서초구", hint: "예술의전당과 대법원, 강남터미널이 위치한 곳" },
+    { name: "강남구", lat: 37.4959, lng: 127.0664, zoom: 10, geoName: "강남구", hint: "코엑스와 가로수길, 압구정 로데오 거리가 있는 트렌드 중심지" },
+    { name: "송파구", lat: 37.5145, lng: 127.1061, zoom: 10, geoName: "송파구", hint: "롯데월드타워와 석촌호수, 올림픽공원이 있는 관광 명소" },
+    { name: "강동구", lat: 37.5301, lng: 127.1238, zoom: 10, geoName: "강동구", hint: "암사동 선사유적지와 허브천문공원이 있는 주거 지역" }
 ];
 
 let shuffledGameLocations = [];
@@ -57,7 +57,7 @@ let score = 0;
 let correctAnswerName = '';
 let numOptions = 4;
 const MAX_QUESTIONS_PER_GAME = 10;
-const PROVINCE_VIEW_ZOOM = 10; 
+const PROVINCE_VIEW_ZOOM = 9; 
 const CITY_VIEW_DELAY = 1000;
 
 function getColorForRegion(name) {
@@ -213,7 +213,7 @@ function loadQuestion() {
     map.setView([37.5665, 126.9780], PROVINCE_VIEW_ZOOM);
     
     setTimeout(() => {
-        if (map) map.flyTo(latLng, currentLocation.zoom || 11, {duration: 1}); 
+        if (map) map.flyTo(latLng, currentLocation.zoom || 10, {duration: 1}); 
     }, CITY_VIEW_DELAY);
     
     optionsArea.innerHTML = ''; 

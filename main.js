@@ -216,7 +216,7 @@ let score = 0;
 let correctAnswerName = '';
 let numOptions = 4; // 보기 개수 (기본값)
 const MAX_QUESTIONS_PER_GAME = 10;
-const PROVINCE_VIEW_ZOOM = 7;
+const PROVINCE_VIEW_ZOOM = 6;
 const CITY_VIEW_DELAY = 1500;
 
 const provinceHueMap = {
@@ -434,7 +434,7 @@ function loadQuestion() {
     
     setTimeout(() => {
         if (map) { 
-            const adjustedZoom = (currentLocation.zoom || 10) - 2;
+            const adjustedZoom = (currentLocation.zoom || 10) - 3;
             const finalZoom = Math.max(adjustedZoom, PROVINCE_VIEW_ZOOM -1);
             map.flyTo(latLng, finalZoom , {duration: 1}); 
         }
