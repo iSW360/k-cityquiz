@@ -254,8 +254,8 @@ function getProvinceFromCode(code) {
     const provinceCodeMap = {
         '11': '서울', '21': '부산', '22': '대구', '23': '인천',
         '24': '광주', '25': '대전', '26': '울산', '29': '세종',
-        '31': '경기', '32': '강원', '33': '충북', '34': '충남',
-        '35': '전북', '36': '전남', '37': '경북', '38': '경남',
+        '31': '경기', '32': '강원특별자치도', '33': '충북', '34': '충남',
+        '35': '전북특별자치도', '36': '전남', '37': '경북', '38': '경남',
         '39': '제주'
     };
     return provinceCodeMap[prefix] || '기타';
@@ -263,7 +263,8 @@ function getProvinceFromCode(code) {
 
 function getColorForRegion(name, code) {
     const province = getProvinceFromCode(code);
-    const hue = provinceHueMap[province] || 0;
+    const provinceKey = province.substring(0, 2); // '강원', '전북' 등으로 매칭
+    const hue = provinceHueMap[provinceKey] || provinceHueMap[province] || 0;
     let hash = 0;
     for (let i = 0; i < name.length; i++) {
         hash += name.charCodeAt(i);

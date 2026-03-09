@@ -189,7 +189,7 @@ function loadQuestion() {
     const currentLocation = shuffledGameLocations[currentQuestionIndex];
     correctAnswerName = currentLocation.name;
     
-    questionTextElement.textContent = "이곳은 서울의 어느 구일까요?";
+    questionTextElement.textContent = "어느 구일까요?";
     currentQuestionElement.textContent = currentQuestionIndex + 1;
 
     if (geoJsonLayer) geoJsonLayer.eachLayer(l => geoJsonLayer.resetStyle(l));
