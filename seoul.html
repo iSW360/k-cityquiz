@@ -30,11 +30,17 @@
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
         })(window, document, "clarity", "script", "vqh5drw2xf");
     </script>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="서울 구 퀴즈 - 서울특별시 25개 자치구의 위치를 재미있게 배워보세요. 강남, 종로, 마포 등 서울 지리 마스터하기.">
+    <meta name="keywords" content="서울 구 퀴즈, 서울 지리, 서울 행정구역, 서울 지도 게임, 자치구 맞추기, 교육용 게임">
+    <meta property="og:title" content="서울 구 퀴즈 - 서울 지리 마스터하기">
+    <meta property="og:description" content="서울의 25개 구, 어디까지 알고 있나요? 재미있는 퀴즈로 확인해보세요.">
+    <meta property="og:type" content="website">
 </head>
 
 <body class="bg-gradient-to-br from-blue-100 via-indigo-50 to-purple-100 flex flex-col items-center justify-center min-h-[90vh] p-2 sm:p-3 selection:bg-blue-200">
 
-    <div id="difficulty-selector" class="bg-white p-4 sm:p-6 rounded-xl shadow-xl w-full max-w-md text-center">
+    <div id="difficulty-selector" class="bg-white p-4 sm:p-6 rounded-xl shadow-xl w-full max-w-md text-center mb-8">
         <h1 class="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 pb-4">
             서울 구 퀴즈
         </h1>
@@ -55,7 +61,27 @@
         </div>
     </div>
 
-    <div id="quiz-container" class="bg-white p-4 sm:p-5 rounded-xl shadow-xl w-full max-w-3xl" style="display: none;">
+    <!-- AdSense Content Optimization: Textual Content for Crawler -->
+    <section class="max-w-3xl w-full bg-white p-6 rounded-xl shadow-md mb-8">
+        <article class="prose prose-sm sm:prose-base max-w-none text-gray-700">
+            <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">서울 25개 자치구 완전 정복</h2>
+            
+            <h3 class="text-lg font-semibold text-gray-800 mt-4 mb-2">서울 지리, 얼마나 아시나요?</h3>
+            <p>
+                서울특별시에는 총 25개의 자치구가 있습니다. 강남구, 서초구, 송파구와 같은 익숙한 이름부터, 정확한 위치가 헷갈리는 구까지.
+                '서울 구 퀴즈'를 통해 서울의 행정구역 지도를 완벽하게 익혀보세요.
+            </p>
+
+            <h3 class="text-lg font-semibold text-gray-800 mt-4 mb-2">게임 특징</h3>
+            <ul class="list-disc list-inside space-y-1">
+                <li><strong>집중 탐구:</strong> 대한민국 전체 지도에서 벗어나, 서울특별시 지도만을 확대하여 디테일하게 학습합니다.</li>
+                <li><strong>줌 효과:</strong> 전체 지도에서 해당 구로 부드럽게 줌인(Zoom-in)되는 효과를 통해 위치 감각을 익힐 수 있습니다.</li>
+                <li><strong>색상 구분:</strong> 각 구별로 고유한 색상을 적용하여 시각적인 구분이 명확합니다.</li>
+            </ul>
+        </article>
+    </section>
+
+    <div id="quiz-container" class="bg-white p-4 sm:p-5 rounded-xl shadow-xl w-full max-w-3xl mb-8" style="display: none;">
 
         <header class="mb-3 text-center">
             <h1 class="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 pb-2">
@@ -115,12 +141,16 @@
             <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
         </section>
 
-        <footer class="mt-8 text-center">
-            <p class="text-xs text-gray-400">
+        <footer class="mt-8 text-center text-xs text-gray-400">
+            <p class="mb-2">
                 지도 타일: &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" class="underline hover:text-blue-600">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" class="underline hover:text-blue-600">CARTO</a>.
                 행정구역 데이터: <a href="https://github.com/southkorea/southkorea-maps" target="_blank" class="underline hover:text-blue-600">southkorea-maps (2024년 행정구역 명칭 반영)</a>.
             </p>
-            <p id="map-error-info" class="text-xs text-red-500 mt-1"></p>
+            <p>
+                <a href="privacy.html" class="underline hover:text-blue-600 mr-2">개인정보처리방침</a> | 
+                <a href="mailto:contact@example.com" class="underline hover:text-blue-600">문의하기</a>
+            </p>
+            <p id="map-error-info" class="text-red-500 mt-1"></p>
         </footer>
     </div>
 

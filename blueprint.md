@@ -18,6 +18,7 @@ A web-based interactive quiz game where users identify South Korean cities and S
 - **Inquiry Form**: Integrated Formspree for partnership inquiries at the bottom of the main page.
 - **Comments**: Integrated Disqus comment section at the bottom of both main and Seoul quiz pages.
 - **Monetization**: Added Google AdSense script and ads.txt for ad integration.
+- **Optimization**: Added rich textual content, SEO meta tags, Privacy Policy, and footer links to enhance AdSense approval chances.
 - **Responsiveness**: Mobile-friendly layout.
 
 ## Planned Change: Seoul District Quiz

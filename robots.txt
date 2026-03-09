@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://isw360.github.io/k-cityquiz/sitemap.xml
