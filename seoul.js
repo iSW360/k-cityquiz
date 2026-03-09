@@ -60,9 +60,9 @@ function getColorForRegion(name) {
     for (let i = 0; i < name.length; i++) {
         hash += name.charCodeAt(i);
     }
-    const hue = 210; // 서울 테마 (블루 계열)
-    const lightness = 40 + (hash % 30); 
-    return `hsl(${hue}, 60%, ${lightness}%)`;
+    const hue = (hash * 13) % 360; // 다양한 색상을 위해 해시 기반 휴값 생성
+    const lightness = 45 + (hash % 20); // 45-65%
+    return `hsl(${hue}, 65%, ${lightness}%)`;
 }
 
 async function initMap() {
