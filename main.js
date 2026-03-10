@@ -20,7 +20,8 @@ let marker;
 let geoJsonLayer; 
 let autoNextTimer;
 let countdownInterval;
-let hintsRemaining = 3;
+let totalHintsUsed = 0;
+let currentQuestionHintUsed = false;
 
 // --- 데이터 시작 (힌트 추가) ---
 const locations = [
@@ -361,8 +362,9 @@ function showDifficultyScreen() {
 async function startGame() { 
     score = 0;
     currentQuestionIndex = 0;
-    hintsRemaining = 3;
-    hintsRemainingElement.textContent = hintsRemaining;
+    totalHintsUsed = 0;
+    currentQuestionHintUsed = false;
+    hintsRemainingElement.textContent = totalHintsUsed;
     
     const allShuffledLocations = shuffleArray([...locations]);
     shuffledGameLocations = allShuffledLocations.slice(0, MAX_QUESTIONS_PER_GAME);
@@ -415,6 +417,7 @@ function loadQuestion() {
 
     const currentLocation = shuffledGameLocations[currentQuestionIndex];
     correctAnswerName = currentLocation.name;
+    currentQuestionHintUsed = false;
     
     questionTextElement.textContent = "이 표시는 어느 지역을 나타낼까요?";
     currentQuestionElement.textContent = currentQuestionIndex + 1;
@@ -471,8 +474,9 @@ function handleAnswer(selectedName, buttonElement) {
     const isCorrect = selectedName === correctAnswerName;
 
     if (isCorrect) {
-        score++;
-        feedbackTextElement.innerHTML = `<span class="text-green-600 font-bold">정답입니다! 🎉</span><br><span class="text-gray-600 text-xs sm:text-sm mt-1">📍 ${currentLocation.hint}</span>`;
+        score += currentQuestionHintUsed ? 0.5 : 1;
+        const scoreGain = currentQuestionHintUsed ? "0.5" : "1";
+        feedbackTextElement.innerHTML = `<span class="text-green-600 font-bold">정답입니다! 🎉 (+${scoreGain}점)</span><br><span class="text-gray-600 text-xs sm:text-sm mt-1">📍 ${currentLocation.hint}</span>`;
         buttonElement.classList.remove('bg-white', 'text-indigo-700', 'border-indigo-300');
         buttonElement.classList.add('bg-green-500', 'text-white', 'border-green-700');
     } else {
@@ -513,18 +517,14 @@ function handleAnswer(selectedName, buttonElement) {
 }
 
 function useHint() {
-    if (hintsRemaining > 0) {
-        hintsRemaining--;
-        hintsRemainingElement.textContent = hintsRemaining;
-        const currentLocation = shuffledGameLocations[currentQuestionIndex];
-        feedbackTextElement.textContent = `💡 힌트: ${currentLocation.hint}`;
-        feedbackTextElement.className = 'text-md font-medium text-amber-600';
-        
-        if (hintsRemaining === 0) {
-            hintBtn.disabled = true;
-            hintBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        }
+    if (!currentQuestionHintUsed) {
+        totalHintsUsed++;
+        currentQuestionHintUsed = true;
+        hintsRemainingElement.textContent = totalHintsUsed;
     }
+    const currentLocation = shuffledGameLocations[currentQuestionIndex];
+    feedbackTextElement.textContent = `💡 힌트: ${currentLocation.hint}`;
+    feedbackTextElement.className = 'text-md font-medium text-amber-600';
 }
 
 function moveToNextQuestion() {
