@@ -73,11 +73,26 @@ body::before {
 }
 
 .option-button {
-    min-height: 3.5rem;
-    border-radius: 1rem;
+    min-height: 3.25rem;
+    padding: 0.25rem;
+    border-radius: 0.75rem;
+    font-size: 0.85rem;
     font-weight: 600;
     transition: all 0.2s ease;
     border: 1px solid rgba(229, 231, 235, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
+    word-break: keep-all;
+}
+
+@media (min-width: 640px) {
+    .option-button {
+        min-height: 3.5rem;
+        padding: 0.5rem;
+        font-size: 0.95rem;
+    }
 }
 
 .option-button:hover:not(:disabled) {
