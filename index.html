@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>대한민국 도시 퀴즈</title>
+    <title>대한민국 도시 퀴즈 | 지리 마스터</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
@@ -20,7 +20,6 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-65PZDWN73K');
     </script>
     <script type="text/javascript">
@@ -30,7 +29,6 @@
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
         })(window, document, "clarity", "script", "vqh5drw2xf");
     </script>
-    <!-- SEO Meta Tags -->
     <meta name="description" content="대한민국 도시 퀴즈 - 한국의 지리와 행정구역을 재미있게 배워보세요. 서울, 부산, 대구 등 주요 도시와 군 위치 맞추기 게임.">
     <meta name="keywords" content="한국 지리, 도시 퀴즈, 행정구역, 지도 게임, 교육용 게임, 사회 공부, 서울 구 퀴즈">
     <meta property="og:title" content="대한민국 도시 퀴즈 - 지리 마스터하기">
@@ -38,151 +36,180 @@
     <meta property="og:type" content="website">
 </head>
 
-<body class="bg-gradient-to-br from-blue-100 via-indigo-50 to-purple-100 flex flex-col items-center justify-center min-h-[90vh] p-2 sm:p-3 selection:bg-blue-200">
+<body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 selection:bg-indigo-200">
 
-    <div id="difficulty-selector" class="bg-white p-4 sm:p-6 rounded-xl shadow-xl w-full max-w-md text-center mb-8">
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 pb-2">
-            대한민국 도시 퀴즈
-        </h1>
+    <!-- 메인 대시보드 (난이도 선택) -->
+    <div id="difficulty-selector" class="glass-card p-6 sm:p-10 w-full max-w-lg text-center relative overflow-hidden z-10">
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
         
-        <!-- 대한민국 지도 이미지 (SVG 개선) -->
-        <div class="flex justify-center my-6">
-            <div class="relative">
-                <svg viewBox="0 0 200 250" class="w-28 h-36 text-indigo-500 fill-current drop-shadow-lg" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M104.5 13.5L108 18.5L115 20L117.5 25L124.5 28.5L127 35.5L134.5 40.5L135.5 49L143.5 54.5L142 63.5L149.5 70L148 78L141.5 83L135.5 83.5L130 90.5L129 99.5L123.5 106.5L122.5 115.5L115 120L114.5 129L108.5 135L101.5 137.5L96 144.5L88 144L80.5 149.5L72.5 148.5L68 141.5L67 132.5L60.5 127L61.5 118L56 111L57.5 102L50 96L52 87L46 81.5L47.5 72.5L41.5 67L44.5 58.5L38 52L41 43.5L35.5 37.5L39.5 29L45.5 27.5L48 20L55 18L58.5 11L67 11.5L72.5 5L81.5 7L88.5 2.5L97 4.5L104.5 13.5Z" opacity="0.3"/>
-                    <!-- 강조된 선택 지역 -->
-                    <circle cx="110" cy="80" r="12" class="text-rose-500 fill-current animate-pulse" />
-                    <path d="M110 80 L110 40" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4" />
-                    <circle cx="110" cy="40" r="4" class="text-rose-500 fill-current" />
+        <h1 class="text-3xl sm:text-4xl font-extrabold mb-2 tracking-tight">
+            <span class="text-gradient">대한민국 도시 퀴즈</span>
+        </h1>
+        <p class="text-gray-500 font-medium mb-8">당신의 지리 점수는 몇 점일까요?</p>
+        
+        <!-- 대형 Hero 이미지 (대한민국 SVG) -->
+        <div class="flex justify-center my-10 relative">
+            <div class="animate-float relative">
+                <!-- 배경 물결 효과 -->
+                <div class="ripple-circle" style="top: 40%; left: 60%;"></div>
+                <div class="ripple-circle" style="top: 40%; left: 60%; animation-delay: 1s;"></div>
+                
+                <svg viewBox="0 0 200 250" class="w-48 h-60 sm:w-64 sm:h-80 drop-shadow-2xl" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="mapGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#818cf8;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#c084fc;stop-opacity:1" />
+                        </linearGradient>
+                        <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur in="SourceAlpha" stdDeviation="5" />
+                            <feOffset dx="0" dy="10" result="offsetblur" />
+                            <feComponentTransfer>
+                                <feFuncA type="linear" slope="0.3" />
+                            </feComponentTransfer>
+                            <feMerge>
+                                <feMergeNode />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <path d="M104.5 13.5L108 18.5L115 20L117.5 25L124.5 28.5L127 35.5L134.5 40.5L135.5 49L143.5 54.5L142 63.5L149.5 70L148 78L141.5 83L135.5 83.5L130 90.5L129 99.5L123.5 106.5L122.5 115.5L115 120L114.5 129L108.5 135L101.5 137.5L96 144.5L88 144L80.5 149.5L72.5 148.5L68 141.5L67 132.5L60.5 127L61.5 118L56 111L57.5 102L50 96L52 87L46 81.5L47.5 72.5L41.5 67L44.5 58.5L38 52L41 43.5L35.5 37.5L39.5 29L45.5 27.5L48 20L55 18L58.5 11L67 11.5L72.5 5L81.5 7L88.5 2.5L97 4.5L104.5 13.5Z" 
+                          fill="url(#mapGradient)" filter="url(#softShadow)" />
+                    <!-- 강조 포인트 -->
+                    <circle cx="110" cy="80" r="14" fill="#f43f5e" class="opacity-80" />
+                    <path d="M110 80 L110 40" stroke="#f43f5e" stroke-width="3" stroke-dasharray="6" />
                 </svg>
-                <!-- 위치 핀 아이콘 추가 -->
-                <div class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <svg class="w-8 h-8 text-rose-600 drop-shadow-md animate-bounce" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-                    </svg>
+                <!-- 핀 아이콘 -->
+                <div class="absolute top-[40%] left-[55%] -translate-x-1/2 -translate-y-1/2">
+                    <div class="bg-rose-500 p-2 rounded-full shadow-lg border-2 border-white animate-bounce">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <h2 class="text-lg font-semibold text-gray-700 mb-4">어디일까요? 지도로 배우는 도시 퀴즈</h2>
-        <div class="flex flex-row justify-center gap-3">
-            <button id="level-1-btn" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all text-base flex-1">
-                Lv.1 <span class="font-normal text-xs block">(4지선다)</span>
+        <div class="grid grid-cols-2 gap-4 mt-8">
+            <button id="level-1-btn" class="btn-modern bg-white text-indigo-600 border-2 border-indigo-100 font-bold py-4 px-4 rounded-2xl shadow-sm">
+                <span class="block text-xl">Level 1</span>
+                <span class="text-xs font-medium text-gray-400">4개 보기</span>
             </button>
-            <button id="level-2-btn" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all text-base flex-1">
-                Lv.2 <span class="font-normal text-xs block">(8지선다)</span>
+            <button id="level-2-btn" class="btn-modern bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-4 px-4 rounded-2xl shadow-lg">
+                <span class="block text-xl">Level 2</span>
+                <span class="text-xs font-medium text-indigo-100">8개 보기</span>
             </button>
         </div>
-        <div class="mt-4 pt-4 border-t border-gray-100">
-            <a href="seoul.html" class="inline-flex items-center text-xs font-medium text-blue-600 hover:text-blue-800 transition-colors">
-                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-                서울 구 퀴즈 하러 가기
+
+        <div class="mt-8 pt-6 border-t border-gray-100/50">
+            <a href="seoul.html" class="inline-flex items-center text-sm font-semibold text-indigo-600 hover:text-purple-600 transition-all group">
+                서울 구 퀴즈로 바로가기
+                <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
             </a>
         </div>
     </div>
 
-    <div id="quiz-container" class="bg-white p-4 sm:p-5 rounded-xl shadow-xl w-full max-w-3xl mb-8" style="display: none;">
-
-        <header class="mb-3 text-center">
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 pb-2">
-            대한민국 도시 퀴즈
-            </h1>
+    <!-- 퀴즈 게임 인터페이스 -->
+    <div id="quiz-container" class="glass-card p-4 sm:p-8 w-full max-w-4xl z-10" style="display: none;">
+        <header class="mb-6 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-gradient">도시 퀴즈 진행 중</h2>
+            <div id="progress-area" class="bg-indigo-50 px-4 py-1.5 rounded-full border border-indigo-100">
+                <span class="text-sm font-bold text-indigo-600"><span id="current-question">0</span> / <span id="total-questions">0</span></span>
+            </div>
         </header>
         
-        <main>
-            <div id="map" class="mb-2"></div>
-
-            <div id="question-area" class="text-center mb-2 flex flex-col items-center justify-center min-h-[4rem]">
-                <p id="question-text" class="text-lg sm:text-xl font-semibold text-gray-700 leading-tight">게임 시작 버튼을 눌러 주세요!</p>
-                <button id="hint-btn" class="mt-2 text-xs bg-amber-100 hover:bg-amber-200 text-amber-700 border border-amber-300 px-3 py-1 rounded-full transition-all flex items-center gap-1 shadow-sm" style="display: none;">
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.477.859h4z"></path></svg>
-                    힌트 보기 <span class="text-[10px] opacity-70">(사용 시 0.5점)</span> | 총 <span id="hints-remaining">0</span>개 사용
-                </button>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- 왼쪽: 지도 영역 -->
+            <div class="lg:col-span-7">
+                <div id="map"></div>
             </div>
 
-            <div id="options-area" class="grid grid-cols-4 gap-2 mb-4"></div>
+            <!-- 오른쪽: 컨트롤 영역 -->
+            <div class="lg:col-span-5 flex flex-col justify-between">
+                <div id="question-area" class="text-center mb-6 bg-white/50 p-4 rounded-2xl border border-white/50">
+                    <p id="question-text" class="text-xl font-bold text-gray-800 leading-tight mb-2">지도의 빨간 영역은 어디일까요?</p>
+                    <button id="hint-btn" class="mx-auto text-xs bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 px-4 py-1.5 rounded-full transition-all flex items-center gap-1.5 shadow-sm" style="display: none;">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.477.859h4z"></path></svg>
+                        힌트 보기 <span class="opacity-60">(0.5점)</span> | <span id="hints-remaining" class="font-bold">0</span>개 사용
+                    </button>
+                </div>
 
-            <div id="feedback-area" class="text-center mb-4 min-h-[2rem] flex items-center justify-center px-4">
-                <p id="feedback-text" class="text-sm sm:text-base font-medium"></p>
-            </div>
-            
-            <div id="progress-area" class="text-center mb-4">
-                <p class="text-base sm:text-lg text-gray-800">문제: <span id="current-question" class="font-bold text-blue-600">0</span> / <span id="total-questions" class="font-bold text-gray-600">0</span></p>
-            </div>
+                <div id="options-area" class="grid grid-cols-2 gap-3 mb-6"></div>
 
-            <div class="flex flex-row flex-nowrap justify-center items-center gap-3">
-                <button id="restart-btn" class="bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all text-sm">
-                    처음으로
-                </button>
-                <button id="next-question-btn" class="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all text-sm" style="display: none;">
-                    다음 문제
-                </button>
+                <div id="feedback-area" class="text-center min-h-[3rem] mb-6 px-4 py-2 rounded-xl transition-colors">
+                    <p id="feedback-text" class="text-base font-bold"></p>
+                </div>
+
+                <div class="flex gap-3">
+                    <button id="restart-btn" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-3 px-4 rounded-xl transition-all">
+                        처음으로
+                    </button>
+                    <button id="next-question-btn" class="flex-[2] bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-indigo-200 transition-all" style="display: none;">
+                        다음 문제
+                    </button>
+                </div>
             </div>
-        </main>
+        </div>
     </div>
 
-    <!-- AdSense Content Optimization: Textual Content for Crawler -->
-    <section class="max-w-3xl w-full bg-white p-4 rounded-xl shadow-md mb-8">
-        <div id="guide-summary" class="text-center">
-            <p class="text-sm text-gray-600 mb-2">지도에 표시된 붉은색 지역의 이름을 맞춰보세요! 난이도에 따라 4개 또는 8개의 보기가 주어집니다.</p>
-            <button id="toggle-guide-btn" class="text-xs text-blue-500 font-medium hover:underline">게임 상세 소개 보기</button>
+    <!-- 가이드 및 상세 내용 -->
+    <section class="max-w-4xl w-full mt-10 z-10">
+        <div class="glass-card p-6 border-none shadow-none">
+            <div id="guide-summary" class="text-center">
+                <p class="text-gray-500 text-sm mb-4">대한민국의 모든 시, 군을 지도로 마스터해보세요!</p>
+                <button id="toggle-guide-btn" class="text-indigo-600 font-bold text-sm hover:underline decoration-2 underline-offset-4">상세 게임 가이드 열기</button>
+            </div>
+            
+            <article id="detailed-guide" class="hidden mt-8 pt-8 border-t border-gray-100/50">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">대한민국 도시 퀴즈란?</h3>
+                <div class="grid sm:grid-cols-2 gap-6 text-gray-600 text-sm leading-relaxed">
+                    <div>
+                        <p class="mb-3 font-semibold text-indigo-600">✓ 교육적인 재미</p>
+                        <p>단순한 게임을 넘어 우리나라의 복잡한 행정구역을 직관적으로 이해할 수 있도록 설계되었습니다.</p>
+                    </div>
+                    <div>
+                        <p class="mb-3 font-semibold text-indigo-600">✓ 실시간 데이터</p>
+                        <p>2024년 최신 행정구역 명칭을 반영하여 정확한 지리 정보를 제공합니다.</p>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- 푸터 및 하단 정보 -->
+    <footer class="mt-16 pb-10 text-center w-full max-w-4xl z-10">
+        <div class="mb-8">
+            <a href="https://smartstore.naver.com/shopelena" target="_blank" class="text-lg font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-indigo-400 hover:scale-110 transition-transform inline-block">
+                Presented by SHOP ELENA
+            </a>
         </div>
         
-        <article id="detailed-guide" class="prose prose-sm max-w-none text-gray-700 hidden mt-4 pt-4 border-t border-gray-100">
-            <h2 class="text-lg font-bold text-gray-800 mb-3 pb-1">대한민국 도시 퀴즈 가이드</h2>
-            
-            <p class="mb-2">
-                '대한민국 도시 퀴즈'는 우리나라의 다양한 행정구역(시, 군, 구)의 위치를 지도를 통해 쉽고 재미있게 학습할 수 있도록 제작된 교육용 게임입니다.
-            </p>
+        <div class="glass-card p-8 mb-8 border-none bg-white/30 backdrop-blur-sm">
+            <h3 class="text-lg font-bold text-gray-800 mb-6">사용자 의견</h3>
+            <div id="disqus_thread"></div>
+        </div>
 
-            <h3 class="text-md font-semibold text-gray-800 mt-3 mb-1">이용 방법</h3>
-            <ol class="list-decimal list-inside space-y-1 text-xs sm:text-sm">
-                <li><strong>난이도 선택:</strong> 보기 4개(Lv.1) 또는 8개(Lv.2)를 선택합니다.</li>
-                <li><strong>문제 풀기:</strong> 지도상의 빨간 영역을 보고 알맞은 도시 이름을 고르세요.</li>
-                <li><strong>학습:</strong> 정답 확인 후 해당 지역의 주요 특징이 설명으로 제공됩니다.</li>
-            </ol>
-        </article>
-    </section>
-    
-    <div class="mt-6 text-center">
-        <a href="https://smartstore.naver.com/shopelena" target="_blank" style="font-size: 14px; color: purple; text-decoration: none;">
-            Presented by Shop Elena
-        </a>
-    </div>
-
-    <section class="mt-10 pt-6 border-t border-gray-100 w-full">
-        <h3 class="text-lg font-bold text-gray-800 mb-6 text-center">댓글 및 피드백</h3>
-        <div id="disqus_thread"></div>
-        <script>
-            /**
-            *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-            *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
-            var disqus_config = function () {
-                this.page.url = window.location.href;  // Replace PAGE_URL with your page's canonical URL variable
-                this.page.identifier = 'k-cityquiz-main'; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-            };
-            (function() { // DON'T EDIT BELOW THIS LINE
-                var d = document, s = d.createElement('script');
-                s.src = 'https://k-cityquiz.disqus.com/embed.js';
-                s.setAttribute('data-timestamp', +new Date());
-                (d.head || d.body).appendChild(s);
-            })();
-        </script>
-        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-    </section>
-
-    <footer class="mt-8 text-center text-xs text-gray-400">
-        <p class="mb-2">
-            지도 타일: &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" class="underline hover:text-blue-600">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" class="underline hover:text-blue-600">CARTO</a>.
-            행정구역 데이터: <a href="https://github.com/southkorea/southkorea-maps" target="_blank" class="underline hover:text-blue-600">southkorea-maps (2024년 행정구역 명칭 반영)</a>.
-        </p>
-        <p>
-            <a href="privacy.html" class="underline hover:text-blue-600 mr-2">개인정보처리방침</a> | 
-            <a href="mailto:contact@example.com" class="underline hover:text-blue-600">문의하기</a>
-        </p>
-        <p id="map-error-info" class="text-red-500 mt-1"></p>
+        <div class="text-[10px] text-gray-400 space-y-2 uppercase tracking-tighter">
+            <p>&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" class="hover:text-indigo-500 transition-colors">OpenStreetMap</a> & <a href="https://carto.com/attributions" target="_blank" class="hover:text-indigo-500 transition-colors">CARTO</a> Contributors</p>
+            <p>Data: <a href="https://github.com/southkorea/southkorea-maps" target="_blank" class="hover:text-indigo-500 transition-colors">southkorea-maps 2024</a></p>
+            <div class="pt-4 flex justify-center gap-4 font-bold text-gray-500">
+                <a href="privacy.html" class="hover:text-indigo-600">Privacy Policy</a>
+                <a href="mailto:contact@example.com" class="hover:text-indigo-600">Contact Us</a>
+            </div>
+        </div>
     </footer>
 
+    <script>
+        var disqus_config = function () {
+            this.page.url = window.location.href;
+            this.page.identifier = 'k-cityquiz-main';
+        };
+        (function() {
+            var d = document, s = d.createElement('script');
+            s.src = 'https://k-cityquiz.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
     <script src="main.js"></script>
 </body>
 </html>

@@ -1,62 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap');
+
+:root {
+    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 50%, #ec4899 100%);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --shadow-soft: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: 'Pretendard', -apple-system, sans-serif;
+    background: radial-gradient(circle at top left, #e0e7ff, #f5f3ff 50%, #fae8ff);
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* 은은한 노이즈 텍스처 오버레이 */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3e%3cfilter id='noiseFilter'%3e%3cturbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3e%3c/filter%3e%3crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3e%3c/svg%3e");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Glassmorphism 카드 스타일 */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-soft);
+    border-radius: 1.5rem;
 }
 
 #map {
-    height: 35vh; /* 모바일에서 화면 높이의 35% 차지 */
-    min-height: 250px;
-    max-height: 400px;
+    height: 40vh;
+    min-height: 300px;
+    max-height: 500px;
     width: 100%;
-    border-radius: 0.75rem;
-    border: 2px solid #e5e7eb; 
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-radius: 1.25rem;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     background-color: #f9fafb;
+    z-index: 10;
 }
 
-/* 태블릿 이상에서는 지도 높이 고정 */
 @media (min-width: 640px) {
     #map {
-        height: 400px;
+        height: 450px;
     }
+}
+
+/* 버튼 스타일링 */
+.btn-modern {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-modern:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+}
+
+.btn-modern:active {
+    transform: translateY(0) scale(0.98);
 }
 
 .option-button {
-    min-height: 3.5rem; /* 터치하기 쉬운 충분한 높이 */
-    padding: 0.5rem;
-    font-size: 0.95rem; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    word-break: keep-all; /* 단어 단위 줄바꿈 */
-    line-height: 1.2;
+    min-height: 3.5rem;
+    border-radius: 1rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    border: 1px solid rgba(229, 231, 235, 0.5);
 }
 
-/* 모바일에서 글자 크기 조정 */
-@media (max-width: 640px) {
-    .option-button {
-        font-size: 0.85rem;
-        min-height: 3rem;
-    }
-    
-    h1 {
-        font-size: 1.5rem !important;
-    }
-    
-    .prose {
-        font-size: 0.9rem !important;
-    }
+.option-button:hover:not(:disabled) {
+    background: white;
+    border-color: #6366f1;
+    color: #4f46e5;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
 }
 
-.leaflet-marker-icon {
-    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3));
+/* 애니메이션 */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
 }
 
-/* 애니메이션 효과 */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+@keyframes ripple {
+    0% { transform: scale(0.8); opacity: 0.8; }
+    100% { transform: scale(2.5); opacity: 0; }
 }
 
-#quiz-container, #difficulty-selector {
-    animation: fadeIn 0.4s ease-out;
+.animate-float {
+    animation: float 4s ease-in-out infinite;
+}
+
+.ripple-circle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: rgba(244, 63, 94, 0.3);
+    border-radius: 50%;
+    animation: ripple 2s infinite;
+}
+
+/* 텍스트 그라데이션 */
+.text-gradient {
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* 스크롤바 커스텀 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+    background: #c7d2fe;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #818cf8;
 }
