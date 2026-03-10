@@ -241,14 +241,15 @@ function handleAnswer(selectedName, buttonElement) {
         btn.classList.add('opacity-70', 'cursor-not-allowed');
     });
 
-    if (selectedName === correctAnswerName) {
+    const currentLocation = shuffledGameLocations[currentQuestionIndex];
+    const isCorrect = selectedName === correctAnswerName;
+
+    if (isCorrect) {
         score++;
-        feedbackTextElement.textContent = '정답입니다! 👏';
-        feedbackTextElement.className = 'text-md sm:text-lg font-medium text-green-600';
+        feedbackTextElement.innerHTML = `<span class="text-green-600 font-bold">정답입니다! 👏</span><br><span class="text-gray-600 text-xs sm:text-sm mt-1">📍 ${currentLocation.hint}</span>`;
         buttonElement.classList.add('bg-green-500', 'text-white', 'border-green-700');
     } else {
-        feedbackTextElement.textContent = `오답입니다. 정답은 ${correctAnswerName} 입니다.`;
-        feedbackTextElement.className = 'text-md sm:text-lg font-medium text-red-600';
+        feedbackTextElement.innerHTML = `<span class="text-red-600 font-bold">오답입니다. 정답은 ${correctAnswerName} 입니다.</span><br><span class="text-gray-600 text-xs sm:text-sm mt-1">📍 ${currentLocation.hint}</span>`;
         buttonElement.classList.add('bg-red-500', 'text-white', 'border-red-700');
 
         Array.from(optionsArea.children).forEach(btn => {
@@ -258,7 +259,7 @@ function handleAnswer(selectedName, buttonElement) {
         });
     }
     
-    let countdown = 3;
+    let countdown = 4;
     const btnLabel = (currentQuestionIndex < shuffledGameLocations.length - 1) ? '다음 문제' : '결과 보기';
     nextQuestionBtn.textContent = `${btnLabel} (${countdown}초)`;
     nextQuestionBtn.style.display = 'inline-block';
@@ -280,7 +281,7 @@ function handleAnswer(selectedName, buttonElement) {
         } else {
             endGame();
         }
-    }, 3000);
+    }, 4000);
 }
 
 function useHint() {
@@ -333,6 +334,23 @@ level1Btn.addEventListener('click', () => selectDifficulty(1));
 level2Btn.addEventListener('click', () => selectDifficulty(2));
 restartBtn.addEventListener('click', showDifficultyScreen);
 hintBtn.addEventListener('click', useHint);
+
+const toggleGuideBtn = document.getElementById('toggle-guide-btn');
+const detailedGuide = document.getElementById('detailed-guide');
+
+if (toggleGuideBtn && detailedGuide) {
+    toggleGuideBtn.addEventListener('click', () => {
+        const isHidden = detailedGuide.classList.contains('hidden');
+        if (isHidden) {
+            detailedGuide.classList.remove('hidden');
+            toggleGuideBtn.textContent = '게임 상세 소개 닫기';
+        } else {
+            detailedGuide.classList.add('hidden');
+            toggleGuideBtn.textContent = '게임 상세 소개 보기';
+        }
+    });
+}
+
 nextQuestionBtn.addEventListener('click', () => {
     if (autoNextTimer) clearTimeout(autoNextTimer);
     if (countdownInterval) clearInterval(countdownInterval);
