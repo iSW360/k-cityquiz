@@ -114,9 +114,9 @@ body::before {
     100% { transform: scale(2.5); opacity: 0; }
 }
 
-.animate-float {
+/* .animate-float {
     animation: float 4s ease-in-out infinite;
-}
+}  */
 
 .ripple-circle {
     position: absolute;
