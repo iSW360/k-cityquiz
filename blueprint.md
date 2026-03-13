@@ -22,8 +22,9 @@ A web-based interactive quiz game where users identify South Korean cities and S
 3.  **Visual Elements**: Enhance the SVG map with gradients and better paths for a 3D look.
 4.  **Button Overhaul**: Apply neon-glow effects and scale-up interactions.
 
-## Planned Change: Seoul District Quiz
-The goal is to add a new game mode specifically for identifying the 25 districts of Seoul.
+## Recent UI Adjustments
+- **Level Selection Buttons**: Reduced vertical padding (from `py-4` to `py-2`) to streamline the main dashboard and reduce vertical scrolling on mobile devices.
+- **Hero Image Integration**: Replaced SVG map with a stylized PNG map image for better performance and visual consistency across browsers.
 
 ### Steps:
 1.  **New Page**: Create `seoul.html` as a dedicated entry point for the Seoul District Quiz.
