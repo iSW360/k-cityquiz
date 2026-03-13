@@ -47,31 +47,10 @@
         </h1>
         <p class="text-gray-500 font-medium mb-8">서울의 25개 자치구, 모두 아시나요?</p>
         
-        <!-- 대형 Hero 이미지 (서울 SVG) -->
+        <!-- 대형 Hero 이미지 (서울 지도) -->
         <div class="flex justify-center my-10 relative">
-            <div class="animate-float relative">
-                <!-- 배경 물결 효과 -->
-                <div class="ripple-circle" style="top: 50%; left: 50%;"></div>
-                
-                <svg viewBox="0 0 200 160" class="w-48 h-40 sm:w-64 sm:h-52 drop-shadow-2xl" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="seoulGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
-                            <stop offset="100%" style="stop-color:#818cf8;stop-opacity:1" />
-                        </linearGradient>
-                    </defs>
-                    <path d="M100 10C80 10 60 25 50 45C40 65 45 85 60 105C70 120 90 140 100 150C110 140 130 120 140 105C155 85 160 65 150 45C140 25 120 10 100 10Z" 
-                          fill="url(#seoulGradient)" opacity="0.8" />
-                    <circle cx="100" cy="80" r="12" fill="#f43f5e" />
-                </svg>
-                <!-- 핀 아이콘 -->
-                <div class="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2">
-                    <div class="bg-rose-500 p-2 rounded-full shadow-lg border-2 border-white animate-bounce">
-                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                </div>
+            <div class="relative">
+                <img src="https://storage.googleapis.com/maker-studio-project-files-prod/ai-co-creator/images/e7e89a69-6938-4e52-a63c-a9b084b6fb7d" alt="서울 지도" class="w-auto h-auto max-w-full max-h-64 sm:max-h-80 drop-shadow-2xl">
             </div>
         </div>
 
