@@ -30,6 +30,7 @@ A web-based interactive quiz game where users identify South Korean cities and S
 - **Keyword Enrichment**: Expanded the "Detailed Guide" sections with relevant keywords (e.g., 사회 공부, 공무원 지리, 25개 자치구) to capture more search traffic.
 
 ### Recently UI Adjustments
+- **Index Page Cleanup**: Removed complex inline SVG/Base64 image data from `index.html` and replaced it with a clean reference to `korea_map.png` for better maintainability and performance.
 - **Level Selection Buttons**: Reduced vertical padding (from `py-4` to `py-2`) to streamline the main dashboard and reduce vertical scrolling on mobile devices.
 - **Hero Image Integration**: Replaced SVG map with a stylized PNG map image for better performance and visual consistency across browsers.
 - **Seoul Map Image**: Replaced the default Seoul map image in `seoul.html` with a custom local image `korea_seoul_map.png` as requested by the user.
