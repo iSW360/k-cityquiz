@@ -50,7 +50,20 @@
         <!-- 대형 Hero 이미지 (서울 지도) -->
         <div class="flex justify-center my-10 relative">
             <div class="relative">
-                <img src="https://storage.googleapis.com/maker-studio-project-files-prod/ai-co-creator/images/e7e89a69-6938-4e52-a63c-a9b084b6fb7d" alt="서울 지도" class="w-auto h-auto max-w-full max-h-64 sm:max-h-80 drop-shadow-2xl">
+                <!-- 배경 물결 효과 -->
+                <div class="ripple-circle" style="top: 40%; left: 50%;"></div>
+                <div class="ripple-circle" style="top: 40%; left: 50%; animation-delay: 1s;"></div>
+                
+                <img src="korea_seoul_map.png" alt="서울 지도" class="w-48 sm:w-56 h-auto drop-shadow-2xl">
+
+                <!-- 핀 아이콘 -->
+                <div class="absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2">
+                    <div class="bg-blue-500 p-2 rounded-full shadow-lg border-2 border-white animate-bounce">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
             </div>
         </div>
 
