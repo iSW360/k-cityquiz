@@ -303,15 +303,29 @@ function endGame() {
     if (autoNextTimer) clearTimeout(autoNextTimer);
     if (countdownInterval) clearInterval(countdownInterval);
 
-    questionTextElement.textContent = `게임 종료! 점수: ${score} / ${shuffledGameLocations.length}`;
+    questionTextElement.textContent = `게임 종료! 최종 점수: ${score} / ${shuffledGameLocations.length}`;
     optionsArea.innerHTML = '';
-    feedbackTextElement.textContent = '수고하셨습니다!';
+    feedbackTextElement.textContent = '수고하셨습니다! 친구들에게 당신의 서울 지리 실력을 보여주세요.';
     feedbackTextElement.className = 'text-md sm:text-lg font-medium text-purple-700';
-    progressArea.style.display = 'none'; 
+    progressArea.style.display = 'none';
     nextQuestionBtn.style.display = 'none';
     hintBtn.style.display = 'none';
-}
 
+    // 공유 버튼 추가
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'col-span-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-all mt-2 flex items-center justify-center gap-2';
+    shareBtn.innerHTML = `
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+        결과 공유하기
+    `;
+    shareBtn.onclick = () => {
+        const text = `📍 서울 구 퀴즈\n나의 점수: ${score} / ${shuffledGameLocations.length}\n서울을 얼마나 잘 아시나요? 👇\n${window.location.href}`;
+        navigator.clipboard.writeText(text).then(() => {
+            alert('결과가 클립보드에 복사되었습니다!');
+        });
+    };
+    optionsArea.appendChild(shareBtn);
+}
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));

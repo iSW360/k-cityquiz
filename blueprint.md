@@ -22,6 +22,13 @@ A web-based interactive quiz game where users identify South Korean cities and S
 3.  **Visual Elements**: Enhance the SVG map with gradients and better paths for a 3D look.
 4.  **Button Overhaul**: Apply neon-glow effects and scale-up interactions.
 
+### SEO & Discovery Optimization:
+- **Enhanced Meta Tags**: Added canonical links, complete Open Graph (Facebook/Kakao), and Twitter Card meta tags for better search engine visibility and social media previews.
+- **Structured Data (JSON-LD)**: Implemented `SoftwareApplication` / `Game` schema to enable rich snippets in Google search results.
+- **Favicons**: Added emoji-based favicons (🌍 for main, 🏙️ for Seoul) for better browser tab recognition.
+- **Viral Discovery**: Added a "Share Result" button at the end of the quiz that copies the score and URL to the clipboard, encouraging users to share their results.
+- **Keyword Enrichment**: Expanded the "Detailed Guide" sections with relevant keywords (e.g., 사회 공부, 공무원 지리, 25개 자치구) to capture more search traffic.
+
 ### Recently UI Adjustments
 - **Level Selection Buttons**: Reduced vertical padding (from `py-4` to `py-2`) to streamline the main dashboard and reduce vertical scrolling on mobile devices.
 - **Hero Image Integration**: Replaced SVG map with a stylized PNG map image for better performance and visual consistency across browsers.
