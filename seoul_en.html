@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>서울 구 퀴즈 | 지리 마스터</title>
+    <title>Seoul District Quiz | Geography Master</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
@@ -14,7 +14,6 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9931225061186683"
      crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-65PZDWN73K"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -29,77 +28,64 @@
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
         })(window, document, "clarity", "script", "vqh5drw2xf");
     </script>
-    <meta name="description" content="서울 구 퀴즈 - 서울특별시 25개 자치구의 위치를 재미있게 배워보세요. 강남, 종로, 마포 등 서울 지리 마스터하기.">
-    <meta name="keywords" content="서울 구 퀴즈, 서울 지리, 서울 행정구역, 서울 지도 게임, 자치구 맞추기, 교육용 게임, 서울 25개구">
-    <link rel="canonical" href="https://isw360.github.io/k-cityquiz/seoul.html">
+    <meta name="description" content="Seoul District Quiz - Learn the locations of all 25 autonomous districts (gu) of Seoul in a fun way!">
+    <meta name="keywords" content="Seoul district quiz, Seoul geography, Seoul gu map, Korea map game, educational game, Seoul 25 districts">
+    <link rel="canonical" href="https://isw360.github.io/k-cityquiz/seoul_en.html">
 
-    <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://isw360.github.io/k-cityquiz/seoul.html">
-    <meta property="og:title" content="서울 구 퀴즈 - 서울 지리 마스터하기">
-    <meta property="og:description" content="서울의 25개 구, 어디까지 알고 있나요? 재미있는 퀴즈로 확인해보세요.">
+    <meta property="og:url" content="https://isw360.github.io/k-cityquiz/seoul_en.html">
+    <meta property="og:title" content="Seoul District Quiz - Master Seoul Geography">
+    <meta property="og:description" content="How well do you know Seoul's 25 districts? Test yourself with this fun map quiz!">
     <meta property="og:image" content="https://isw360.github.io/k-cityquiz/korea_seoul_map.png">
 
-    <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://isw360.github.io/k-cityquiz/seoul.html">
-    <meta property="twitter:title" content="서울 구 퀴즈 - 서울 지리 마스터하기">
-    <meta property="twitter:description" content="서울의 25개 구, 어디까지 알고 있나요? 재미있는 퀴즈로 확인해보세요.">
+    <meta property="twitter:url" content="https://isw360.github.io/k-cityquiz/seoul_en.html">
+    <meta property="twitter:title" content="Seoul District Quiz - Master Seoul Geography">
+    <meta property="twitter:description" content="How well do you know Seoul's 25 districts? Test yourself with this fun map quiz!">
     <meta property="twitter:image" content="https://isw360.github.io/k-cityquiz/korea_seoul_map.png">
 
-    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏙️</text></svg>">
 
-    <!-- Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
-      "name": "서울 구 퀴즈",
+      "name": "Seoul District Quiz",
       "operatingSystem": "Web",
       "applicationCategory": "GameApplication",
       "genre": "Educational, Quiz",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "KRW"
-      },
-      "description": "서울의 25개 자치구 위치를 지도로 익히는 교육용 퀴즈 게임입니다.",
-      "author": {
-        "@type": "Organization",
-        "name": "SHOP ELENA"
-      }
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "description": "An educational quiz game to learn the locations of Seoul's 25 autonomous districts on a map.",
+      "author": { "@type": "Organization", "name": "SHOP ELENA" }
     }
     </script>
 </head>
 
 <body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 selection:bg-indigo-200">
 
-    <!-- 메인 대시보드 (난이도 선택) -->
+    <!-- Main Dashboard -->
     <div id="difficulty-selector" class="glass-card p-6 sm:p-10 w-full max-w-lg text-center relative overflow-hidden z-10">
         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
-        
+
+        <!-- 언어 전환 버튼 -->
         <div class="absolute top-4 right-4">
-            <a href="seoul_en.html" class="text-xs font-bold text-blue-400 hover:text-blue-600 border border-blue-200 px-2 py-1 rounded-full transition-all">🇺🇸 English</a>
+            <a href="seoul.html" class="text-xs font-bold text-blue-400 hover:text-blue-600 border border-blue-200 px-2 py-1 rounded-full transition-all">🇰🇷 한국어</a>
         </div>
 
-
-
         <h1 class="text-3xl sm:text-4xl font-extrabold mb-2 tracking-tight">
-            <span class="text-gradient">서울 구 퀴즈</span>
+            <span class="text-gradient">Seoul District Quiz</span>
         </h1>
-        <p class="text-gray-500 font-medium mb-8">서울의 25개 자치구, 모두 아시나요?</p>
-        
-        <!-- 대형 Hero 이미지 (서울 지도) -->
+        <p class="text-gray-500 font-medium mb-8">Do you know all 25 districts of Seoul?</p>
+
+        <!-- Hero Image -->
         <div class="flex justify-center my-10 relative">
             <div class="relative">
-                <!-- 배경 물결 효과 -->
                 <div class="ripple-circle" style="top: 40%; left: 50%;"></div>
                 <div class="ripple-circle" style="top: 40%; left: 50%; animation-delay: 1s;"></div>
-                
-                <img src="korea_seoul_map.png" alt="서울 지도" class="w-48 sm:w-56 h-auto drop-shadow-2xl">
 
-                <!-- 핀 아이콘 -->
+                <img src="korea_seoul_map.png" alt="Map of Seoul" class="w-48 sm:w-56 h-auto drop-shadow-2xl">
+
+                <!-- Pin Icon -->
                 <div class="absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2">
                     <div class="bg-blue-500 p-2 rounded-full shadow-lg border-2 border-white animate-bounce">
                         <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -113,44 +99,44 @@
         <div class="grid grid-cols-2 gap-4 mt-8">
             <button id="level-1-btn" class="btn-modern bg-white text-blue-600 border-2 border-blue-100 font-bold py-2 px-4 rounded-2xl shadow-sm">
                 <span class="block text-xl">Level 1</span>
-                <span class="text-xs font-medium text-gray-400">4개 보기</span>
+                <span class="text-xs font-medium text-gray-400">4 choices</span>
             </button>
             <button id="level-2-btn" class="btn-modern bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-2 px-4 rounded-2xl shadow-lg">
                 <span class="block text-xl">Level 2</span>
-                <span class="text-xs font-medium text-blue-100">8개 보기</span>
+                <span class="text-xs font-medium text-blue-100">8 choices</span>
             </button>
         </div>
 
         <div class="mt-8 pt-6 border-t border-gray-100/50">
-            <a href="index.html" class="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-indigo-600 transition-all group">
+            <a href="index_en.html" class="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-indigo-600 transition-all group">
                 <svg class="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 8.959 8.959 0 01-9 9 8.959 8.959 0 01-9-9z"></path></svg>
-                대한민국 도시 퀴즈로 돌아가기
+                Back to Korea City Quiz
             </a>
         </div>
     </div>
 
-    <!-- 퀴즈 게임 인터페이스 -->
+    <!-- Quiz Game Interface -->
     <div id="quiz-container" class="glass-card p-4 sm:p-8 w-full max-w-4xl z-10" style="display: none;">
         <header class="mb-6 flex justify-between items-center">
-            <h2 class="text-xl font-bold text-gradient">서울 구 퀴즈 진행 중</h2>
+            <h2 class="text-xl font-bold text-gradient">Seoul District Quiz</h2>
             <div id="progress-area" class="bg-blue-50 px-4 py-1.5 rounded-full border border-blue-100">
                 <span class="text-sm font-bold text-blue-600"><span id="current-question">0</span> / <span id="total-questions">0</span></span>
             </div>
         </header>
-        
+
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <!-- 왼쪽: 지도 영역 -->
+            <!-- Left: Map -->
             <div class="lg:col-span-7">
                 <div id="map"></div>
             </div>
 
-            <!-- 오른쪽: 컨트롤 영역 -->
+            <!-- Right: Controls -->
             <div class="lg:col-span-5 flex flex-col justify-between">
                 <div id="question-area" class="text-center mb-6 bg-white/50 p-4 rounded-2xl border border-white/50">
-                    <p id="question-text" class="text-xl font-bold text-gray-800 leading-tight mb-2">지도의 빨간 영역은 어디일까요?</p>
+                    <p id="question-text" class="text-xl font-bold text-gray-800 leading-tight mb-2">Which district is highlighted in red?</p>
                     <button id="hint-btn" class="mx-auto text-xs bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 px-4 py-1.5 rounded-full transition-all flex items-center gap-1.5 shadow-sm" style="display: none;">
                         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.477.859h4z"></path></svg>
-                        힌트 보기 <span class="opacity-60">(0.5점)</span> | <span id="hints-remaining" class="font-bold">0</span>개 사용
+                        Hint <span class="opacity-60">(-0.5pt)</span> | Used: <span id="hints-remaining" class="font-bold">0</span>
                     </button>
                 </div>
 
@@ -162,56 +148,56 @@
 
                 <div class="flex gap-3">
                     <button id="restart-btn" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-3 px-4 rounded-xl transition-all">
-                        처음으로
+                        Restart
                     </button>
                     <button id="next-question-btn" class="flex-[2] bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-blue-200 transition-all" style="display: none;">
-                        다음 문제
+                        Next
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 가이드 및 상세 내용 -->
+    <!-- Guide Section -->
     <section class="max-w-4xl w-full mt-10 z-10">
         <div class="glass-card p-6 border-none shadow-none">
             <div id="guide-summary" class="text-center">
-                <p class="text-gray-500 text-sm mb-4">서울의 25개 자치구를 완벽하게 익혀보세요!</p>
-                <button id="toggle-guide-btn" class="text-blue-600 font-bold text-sm hover:underline decoration-2 underline-offset-4">상세 게임 가이드 열기</button>
+                <p class="text-gray-500 text-sm mb-4">Master all 25 autonomous districts of Seoul!</p>
+                <button id="toggle-guide-btn" class="text-blue-600 font-bold text-sm hover:underline decoration-2 underline-offset-4">Open Detailed Game Guide</button>
             </div>
-            
+
             <article id="detailed-guide" class="hidden mt-8 pt-8 border-t border-gray-100/50">
-                <h3 class="text-xl font-bold text-gray-800 mb-4">서울 구 퀴즈 상세 가이드</h3>
+                <h3 class="text-xl font-bold text-gray-800 mb-4">About Seoul District Quiz</h3>
                 <div class="grid sm:grid-cols-2 gap-6 text-gray-600 text-sm leading-relaxed">
                     <div>
-                        <p class="mb-3 font-semibold text-blue-600">✓ 25개 자치구 정복</p>
-                        <p>서울의 모든 자치구 위치와 명칭을 퀴즈를 통해 쉽고 빠르게 학습할 수 있습니다. 강남, 서초, 송파의 위치부터 도봉, 노원, 강북까지 서울 지도를 한눈에 익혀보세요.</p>
+                        <p class="mb-3 font-semibold text-blue-600">✓ Conquer All 25 Districts</p>
+                        <p>Learn the location and name of every autonomous district (gu) in Seoul quickly and easily through this quiz. From Gangnam and Seocho in the south to Dobong and Nowon in the north.</p>
                     </div>
                     <div>
-                        <p class="mb-3 font-semibold text-blue-600">✓ 생활 밀착형 상식</p>
-                        <p>정답 확인 후 각 구를 대표하는 주요 특징과 지리 정보를 제공합니다. 부동산, 배달, 교통 등 실생활에 꼭 필요한 서울 지리 상식을 키워줍니다.</p>
+                        <p class="mb-3 font-semibold text-blue-600">✓ Practical Knowledge</p>
+                        <p>After each answer, discover key facts and geographic information about each district. Build the Seoul geography knowledge you need for daily life, travel, and beyond.</p>
                     </div>
                 </div>
                 <div class="mt-6 p-4 bg-blue-50/50 rounded-xl border border-blue-100/50">
                     <p class="text-xs text-gray-500 italic">
-                        "내가 살고 있는 곳, 내가 일하는 곳은 어디쯤일까요? 
-                        복잡한 서울 지도를 게임처럼 즐기다 보면 어느새 당신도 서울 지리 마스터가 되어있을 것입니다."
+                        "Where exactly is the place you live or work in Seoul?
+                        Play through this quiz and you'll become a Seoul geography master before you know it!"
                     </p>
                 </div>
             </article>
         </div>
     </section>
 
-    <!-- 푸터 및 하단 정보 -->
+    <!-- Footer -->
     <footer class="mt-16 pb-10 text-center w-full max-w-4xl z-10">
         <div class="mb-8">
             <a href="https://smartstore.naver.com/shopelena" target="_blank" class="text-lg font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 hover:scale-110 transition-transform inline-block">
                 Presented by SHOP ELENA
             </a>
         </div>
-        
+
         <div class="glass-card p-8 mb-8 border-none bg-white/30 backdrop-blur-sm">
-            <h3 class="text-lg font-bold text-gray-800 mb-6">사용자 의견</h3>
+            <h3 class="text-lg font-bold text-gray-800 mb-6">User Comments</h3>
             <div id="disqus_thread"></div>
         </div>
 
@@ -222,14 +208,13 @@
                 <a href="mailto:contact@example.com" class="hover:text-indigo-600">Contact Us</a>
             </div>
             <p id="map-error-info" class="text-rose-500 mt-2 lowercase font-normal h-4"></p>
-            </div>
-
+        </div>
     </footer>
 
     <script>
         var disqus_config = function () {
             this.page.url = window.location.href;
-            this.page.identifier = 'k-cityquiz-seoul';
+            this.page.identifier = 'k-cityquiz-seoul-en';
         };
         (function() {
             var d = document, s = d.createElement('script');
@@ -238,6 +223,6 @@
             (d.head || d.body).appendChild(s);
         })();
     </script>
-    <script src="seoul.js"></script>
+    <script src="seoul_en.js"></script>
 </body>
 </html>
