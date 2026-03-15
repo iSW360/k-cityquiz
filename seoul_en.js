@@ -20,7 +20,7 @@ let totalHintsUsed = 0, currentQuestionHintUsed = false;
 
 // --- Timer ---
 let questionTimer = null, questionTimeLeft = 0;
-const QUESTION_TIME_LIMIT = 10;
+let questionTimeLimit = 10;
 
 // --- Best score / Stats / Time ---
 let gameStartTime = null, gameElapsedSec = 0, answerLog = [];
@@ -81,7 +81,7 @@ function createTimerUI() {
         <div class="relative w-full bg-gray-200 rounded-full h-3 overflow-hidden">
             <div id="timer-bar" class="h-3 rounded-full transition-all duration-1000 ease-linear bg-blue-500" style="width:100%"></div>
         </div>
-        <span id="timer-text" class="text-sm font-bold text-blue-600 min-w-[2.5rem] text-right">${QUESTION_TIME_LIMIT}s</span>
+        <span id="timer-text" class="text-sm font-bold text-blue-600 min-w-[2.5rem] text-right">${questionTimeLimit}s</span>
     `;
     const questionArea = document.getElementById('question-area');
     questionArea.parentNode.insertBefore(timerEl, questionArea);
@@ -89,13 +89,13 @@ function createTimerUI() {
 
 function startQuestionTimer() {
     if (questionTimer) clearInterval(questionTimer);
-    questionTimeLeft = QUESTION_TIME_LIMIT;
+    questionTimeLeft = questionTimeLimit;
     createTimerUI();
     const timerBar = document.getElementById('timer-bar');
     const timerText = document.getElementById('timer-text');
     questionTimer = setInterval(() => {
         questionTimeLeft--;
-        const pct = (questionTimeLeft / QUESTION_TIME_LIMIT) * 100;
+        const pct = (questionTimeLeft / questionTimeLimit) * 100;
         if (timerBar) timerBar.style.width = pct + '%';
         if (timerText) timerText.textContent = questionTimeLeft + 's';
         if (timerBar) {
@@ -117,7 +117,7 @@ function stopQuestionTimer() {
 
 function handleTimeOut() {
     stopQuestionTimer();
-    answerLog.push({ name: correctAnswerName, correct: false, timeTaken: QUESTION_TIME_LIMIT });
+    answerLog.push({ name: correctAnswerName, correct: false, timeTaken: questionTimeLimit });
     saveLocationStats(correctAnswerName, false);
     Array.from(optionsArea.children).forEach(btn => {
         btn.disabled = true;
@@ -184,8 +184,12 @@ function highlightCurrentQuestionRegion(geoName) {
     }
 }
 
+let isKidsMode = false;
+
 function selectDifficulty(level) {
+    isKidsMode = (level === 1);
     numOptions = (level === 2) ? 8 : 4;
+    questionTimeLimit = (level === 2) ? 15 : 10;
     difficultySelector.style.display = 'none';
     quizContainer.style.display = 'block';
     startGame();
@@ -233,7 +237,7 @@ function loadQuestion() {
     const loc = shuffledGameLocations[currentQuestionIndex];
     correctAnswerName = loc.name;
     currentQuestionHintUsed = false;
-    questionTimeLeft = QUESTION_TIME_LIMIT;
+    questionTimeLeft = questionTimeLimit;
     questionTextElement.textContent = "Which district is highlighted in red?";
     currentQuestionElement.textContent = currentQuestionIndex + 1;
     if (geoJsonLayer) geoJsonLayer.eachLayer(l => geoJsonLayer.resetStyle(l));
@@ -261,8 +265,18 @@ function loadQuestion() {
     });
     feedbackTextElement.textContent = '';
     nextQuestionBtn.style.display = 'none';
-    hintBtn.style.display = 'inline-flex';
-    setTimeout(() => startQuestionTimer(), CITY_VIEW_DELAY + 1000);
+
+    if (isKidsMode) {
+        hintBtn.style.display = 'none';
+        const loc = shuffledGameLocations[currentQuestionIndex];
+        setTimeout(() => {
+            feedbackTextElement.textContent = `💡 Hint: ${maskHint(loc.hint, correctAnswerName)}`;
+            feedbackTextElement.className = 'text-md font-medium text-amber-600';
+        }, CITY_VIEW_DELAY + 500);
+    } else {
+        hintBtn.style.display = 'inline-flex';
+        setTimeout(() => startQuestionTimer(), CITY_VIEW_DELAY + 1000);
+    }
 }
 
 function handleAnswer(selectedName, buttonElement) {
@@ -275,10 +289,10 @@ function handleAnswer(selectedName, buttonElement) {
     });
     const loc = shuffledGameLocations[currentQuestionIndex];
     const isCorrect = selectedName === correctAnswerName;
-    const timeTaken = QUESTION_TIME_LIMIT - questionTimeLeft;
+    const timeTaken = questionTimeLimit - questionTimeLeft;
     answerLog.push({ name: correctAnswerName, correct: isCorrect, timeTaken });
     saveLocationStats(correctAnswerName, isCorrect);
-    const timeBonus = questionTimeLeft > 0 ? (questionTimeLeft / QUESTION_TIME_LIMIT) : 0;
+    const timeBonus = questionTimeLeft > 0 ? (questionTimeLeft / questionTimeLimit) : 0;
     if (isCorrect) {
         let gained = currentQuestionHintUsed ? 0.5 : Math.round((0.5 + timeBonus * 0.5) * 10) / 10;
         score += gained;

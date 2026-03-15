@@ -26,7 +26,7 @@ let currentQuestionHintUsed = false;
 // --- Timer ---
 let questionTimer = null;
 let questionTimeLeft = 0;
-const QUESTION_TIME_LIMIT = 10;
+const QUESTION_TIME_LIMIT = 15;
 
 // --- Best score / Stats / Time ---
 let gameStartTime = null;

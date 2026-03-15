@@ -20,7 +20,7 @@ let totalHintsUsed = 0, currentQuestionHintUsed = false;
 
 // --- 타이머 ---
 let questionTimer = null, questionTimeLeft = 0;
-const QUESTION_TIME_LIMIT = 10;
+let questionTimeLimit = 10; // Level1: 미사용, Level2/챌린지: 15초
 
 // --- 점수 / 통계 / 시간 ---
 let gameStartTime = null, gameElapsedSec = 0, answerLog = [];
@@ -30,6 +30,7 @@ const LS_STATS = 'kcityquiz_stats';
 // --- 일일 챌린지 ---
 const LS_DAILY = 'kcityquiz_daily';
 let isDailyMode = false;
+let isKidsMode = false; // Level 1 = 타이머 없음 + 힌트 자동 표시
 
 // --- 데이터 ---
 const locations = [
@@ -252,7 +253,9 @@ function startDailyChallenge() {
         return;
     }
     isDailyMode = true;
-    numOptions = 4;
+    isKidsMode = false;       // 챌린지는 일반 모드
+    numOptions = 8;           // 8지선다
+    questionTimeLimit = 15;   // 15초 타이머
     difficultySelector.style.display = 'none';
     quizContainer.style.display = 'block';
     startGame(true);
@@ -359,7 +362,7 @@ function createTimerUI() {
         <div class="relative w-full bg-gray-200 rounded-full h-3 overflow-hidden">
             <div id="timer-bar" class="h-3 rounded-full transition-all duration-1000 ease-linear bg-indigo-500" style="width:100%"></div>
         </div>
-        <span id="timer-text" class="text-sm font-bold text-indigo-600 min-w-[2.5rem] text-right">${QUESTION_TIME_LIMIT}초</span>
+        <span id="timer-text" class="text-sm font-bold text-indigo-600 min-w-[2.5rem] text-right">${questionTimeLimit}초</span>
     `;
     const questionArea = document.getElementById('question-area');
     questionArea.parentNode.insertBefore(timerEl, questionArea);
@@ -367,13 +370,13 @@ function createTimerUI() {
 
 function startQuestionTimer() {
     if (questionTimer) clearInterval(questionTimer);
-    questionTimeLeft = QUESTION_TIME_LIMIT;
+    questionTimeLeft = questionTimeLimit;
     createTimerUI();
     const timerBar = document.getElementById('timer-bar');
     const timerText = document.getElementById('timer-text');
     questionTimer = setInterval(() => {
         questionTimeLeft--;
-        const pct = (questionTimeLeft / QUESTION_TIME_LIMIT) * 100;
+        const pct = (questionTimeLeft / questionTimeLimit) * 100;
         if (timerBar) timerBar.style.width = pct + '%';
         if (timerText) timerText.textContent = questionTimeLeft + '초';
         if (timerBar) {
@@ -395,7 +398,7 @@ function stopQuestionTimer() {
 
 function handleTimeOut() {
     stopQuestionTimer();
-    answerLog.push({ name: correctAnswerName, correct: false, timeTaken: QUESTION_TIME_LIMIT });
+    answerLog.push({ name: correctAnswerName, correct: false, timeTaken: questionTimeLimit });
     saveLocationStats(correctAnswerName, false);
     Array.from(optionsArea.children).forEach(btn => {
         btn.disabled = true;
@@ -469,7 +472,9 @@ function highlightCurrentQuestionRegion(questionGeoName) {
 
 function selectDifficulty(level) {
     isDailyMode = false;
+    isKidsMode = (level === 1);
     numOptions = (level === 2) ? 8 : 4;
+    questionTimeLimit = (level === 2) ? 15 : 10;
     difficultySelector.style.display = 'none';
     quizContainer.style.display = 'block';
     startGame();
@@ -531,7 +536,7 @@ function loadQuestion() {
     const loc = shuffledGameLocations[currentQuestionIndex];
     correctAnswerName = loc.name;
     currentQuestionHintUsed = false;
-    questionTimeLeft = QUESTION_TIME_LIMIT;
+    questionTimeLeft = questionTimeLimit;
     questionTextElement.textContent = "이 표시는 어느 지역을 나타낼까요?";
     currentQuestionElement.textContent = currentQuestionIndex + 1;
     if (geoJsonLayer) geoJsonLayer.eachLayer(l => geoJsonLayer.resetStyle(l));
@@ -554,8 +559,18 @@ function loadQuestion() {
     feedbackTextElement.textContent = '';
     feedbackTextElement.className = 'text-md sm:text-lg font-medium';
     nextQuestionBtn.style.display = 'none';
-    hintBtn.style.display = 'inline-flex';
-    setTimeout(() => startQuestionTimer(), CITY_VIEW_DELAY + 1000);
+
+    if (isKidsMode) {
+        // Level 1: 타이머 없음, 힌트 버튼 숨기고 힌트 바로 표시
+        hintBtn.style.display = 'none';
+        setTimeout(() => {
+            feedbackTextElement.textContent = `💡 힌트: ${maskHint(loc.hint, correctAnswerName)}`;
+            feedbackTextElement.className = 'text-md font-medium text-amber-600';
+        }, CITY_VIEW_DELAY + 500);
+    } else {
+        hintBtn.style.display = 'inline-flex';
+        setTimeout(() => startQuestionTimer(), CITY_VIEW_DELAY + 1000);
+    }
 }
 
 function handleAnswer(selectedName, buttonElement) {
@@ -569,10 +584,10 @@ function handleAnswer(selectedName, buttonElement) {
     });
     const loc = shuffledGameLocations[currentQuestionIndex];
     const isCorrect = selectedName === correctAnswerName;
-    const timeTaken = QUESTION_TIME_LIMIT - questionTimeLeft;
+    const timeTaken = questionTimeLimit - questionTimeLeft;
     answerLog.push({ name: correctAnswerName, correct: isCorrect, timeTaken });
     saveLocationStats(correctAnswerName, isCorrect);
-    const timeBonus = questionTimeLeft > 0 ? (questionTimeLeft / QUESTION_TIME_LIMIT) : 0;
+    const timeBonus = questionTimeLeft > 0 ? (questionTimeLeft / questionTimeLimit) : 0;
     if (isCorrect) {
         let gained = currentQuestionHintUsed ? 0.5 : Math.round((0.5 + timeBonus*0.5)*10)/10;
         score += gained;

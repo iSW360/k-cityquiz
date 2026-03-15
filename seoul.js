@@ -26,7 +26,7 @@ let currentQuestionHintUsed = false;
 // --- 타이머 관련 변수 ---
 let questionTimer = null;
 let questionTimeLeft = 0;
-const QUESTION_TIME_LIMIT = 10;
+let questionTimeLimit = 10; // Level1: 미사용, Level2/챌린지: 15초
 
 // --- 최고 점수 / 통계 / 소요 시간 ---
 let gameStartTime = null;
@@ -95,7 +95,7 @@ function createTimerUI() {
         <div class="relative w-full bg-gray-200 rounded-full h-3 overflow-hidden">
             <div id="timer-bar" class="h-3 rounded-full transition-all duration-1000 ease-linear bg-indigo-500" style="width:100%"></div>
         </div>
-        <span id="timer-text" class="text-sm font-bold text-indigo-600 min-w-[2.5rem] text-right">${QUESTION_TIME_LIMIT}초</span>
+        <span id="timer-text" class="text-sm font-bold text-indigo-600 min-w-[2.5rem] text-right">${questionTimeLimit}초</span>
     `;
     const questionArea = document.getElementById('question-area');
     questionArea.parentNode.insertBefore(timerEl, questionArea);
@@ -103,7 +103,7 @@ function createTimerUI() {
 
 function startQuestionTimer() {
     if (questionTimer) clearInterval(questionTimer);
-    questionTimeLeft = QUESTION_TIME_LIMIT;
+    questionTimeLeft = questionTimeLimit;
     createTimerUI();
 
     const timerBar = document.getElementById('timer-bar');
@@ -111,7 +111,7 @@ function startQuestionTimer() {
 
     questionTimer = setInterval(() => {
         questionTimeLeft--;
-        const pct = (questionTimeLeft / QUESTION_TIME_LIMIT) * 100;
+        const pct = (questionTimeLeft / questionTimeLimit) * 100;
         if (timerBar) timerBar.style.width = pct + '%';
         if (timerText) timerText.textContent = questionTimeLeft + '초';
 
@@ -141,7 +141,7 @@ function stopQuestionTimer() {
 
 function handleTimeOut() {
     stopQuestionTimer();
-    answerLog.push({ name: correctAnswerName, correct: false, timeTaken: QUESTION_TIME_LIMIT });
+    answerLog.push({ name: correctAnswerName, correct: false, timeTaken: questionTimeLimit });
     saveLocationStats(correctAnswerName, false);
 
     Array.from(optionsArea.children).forEach(btn => {
@@ -238,8 +238,12 @@ function highlightCurrentQuestionRegion(questionGeoName) {
     }
 }
 
+let isKidsMode = false;
+
 function selectDifficulty(level) {
+    isKidsMode = (level === 1);
     numOptions = (level === 2) ? 8 : 4;
+    questionTimeLimit = (level === 2) ? 15 : 10;
     difficultySelector.style.display = 'none';
     quizContainer.style.display = 'block';
     startGame();
@@ -302,7 +306,7 @@ function loadQuestion() {
     const currentLocation = shuffledGameLocations[currentQuestionIndex];
     correctAnswerName = currentLocation.name;
     currentQuestionHintUsed = false;
-    questionTimeLeft = QUESTION_TIME_LIMIT;
+    questionTimeLeft = questionTimeLimit;
 
     questionTextElement.textContent = "어느 구일까요?";
     currentQuestionElement.textContent = currentQuestionIndex + 1;
@@ -330,10 +334,17 @@ function loadQuestion() {
 
     feedbackTextElement.textContent = '';
     nextQuestionBtn.style.display = 'none';
-    hintBtn.style.display = 'inline-flex';
 
-    // 지도 이동 완료 후 타이머 시작
-    setTimeout(() => startQuestionTimer(), CITY_VIEW_DELAY + 1000);
+    if (isKidsMode) {
+        hintBtn.style.display = 'none';
+        setTimeout(() => {
+            feedbackTextElement.textContent = `💡 힌트: ${maskHint(currentLocation.hint, correctAnswerName)}`;
+            feedbackTextElement.className = 'text-md font-medium text-amber-600';
+        }, CITY_VIEW_DELAY + 500);
+    } else {
+        hintBtn.style.display = 'inline-flex';
+        setTimeout(() => startQuestionTimer(), CITY_VIEW_DELAY + 1000);
+    }
 }
 
 function handleAnswer(selectedName, buttonElement) {
@@ -348,12 +359,12 @@ function handleAnswer(selectedName, buttonElement) {
 
     const currentLocation = shuffledGameLocations[currentQuestionIndex];
     const isCorrect = selectedName === correctAnswerName;
-    const timeTaken = QUESTION_TIME_LIMIT - questionTimeLeft;
+    const timeTaken = questionTimeLimit - questionTimeLeft;
 
     answerLog.push({ name: correctAnswerName, correct: isCorrect, timeTaken });
     saveLocationStats(correctAnswerName, isCorrect);
 
-    const timeBonus = questionTimeLeft > 0 ? (questionTimeLeft / QUESTION_TIME_LIMIT) : 0;
+    const timeBonus = questionTimeLeft > 0 ? (questionTimeLeft / questionTimeLimit) : 0;
 
     if (isCorrect) {
         let gainedScore;

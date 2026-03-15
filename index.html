@@ -140,10 +140,10 @@
         </div>
 
         <div class="mt-6 pt-6 border-t border-gray-100/50">
-            <a href="seoul.html" class="inline-flex items-center text-sm font-semibold text-indigo-600 hover:text-purple-600 transition-all group">
-                서울 구 퀴즈로 바로가기
-                <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-            </a>
+            <div class="flex justify-center gap-2">
+                <a href="seoul.html" class="text-xs font-semibold text-indigo-500 bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 px-4 py-1.5 rounded-full transition-all">🏙️ 서울 구 퀴즈</a>
+                <a href="us.html" class="text-xs font-semibold text-red-500 bg-red-50 hover:bg-red-100 border border-red-100 px-4 py-1.5 rounded-full transition-all">🇺🇸 미국 주 퀴즈</a>
+            </div>
         </div>
     </div>
 
@@ -238,13 +238,13 @@
             <p>Data: <a href="https://github.com/southkorea/southkorea-maps" target="_blank" class="hover:text-indigo-500 transition-colors">southkorea-maps 2024</a></p>
             <div class="pt-4 flex justify-center gap-4 font-bold text-gray-500">
                 <a href="privacy.html" class="hover:text-indigo-600">Privacy Policy</a>
-                <a href="mailto:contact@example.com" class="hover:text-indigo-600">Contact Us</a>
+                <a href="/cdn-cgi/l/email-protection#472428293326243307223f262a372b226924282a" class="hover:text-indigo-600">Contact Us</a>
             </div>
             <p id="map-error-info" class="text-rose-500 mt-2 lowercase font-normal h-4"></p>
         </div>
     </footer>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         var disqus_config = function () {
             this.page.url = window.location.href;
             this.page.identifier = 'k-cityquiz-main';
@@ -259,8 +259,3 @@
     <script src="main.js"></script>
     <!-- ② main.js 로드 후 이벤트 연결 — 함수를 확실히 찾을 수 있음 -->
     <script>
-        document.getElementById('daily-btn')
-            .addEventListener('click', function() { startDailyChallenge(); });
-    </script>
-</body>
-</html>
