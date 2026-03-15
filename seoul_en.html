@@ -117,14 +117,14 @@
 
     <!-- Quiz Game Interface -->
     <div id="quiz-container" class="glass-card p-4 sm:p-8 w-full max-w-4xl z-10" style="display: none;">
-        <header class="mb-6 flex justify-between items-center">
-            <h2 class="text-xl font-bold text-gradient">Seoul District Quiz</h2>
-            <div id="progress-area" class="bg-blue-50 px-4 py-1.5 rounded-full border border-blue-100">
-                <span class="text-sm font-bold text-blue-600"><span id="current-question">0</span> / <span id="total-questions">0</span></span>
+        <header class="mb-4 sm:mb-6 flex justify-between items-center">
+            <h2 class="text-lg sm:text-xl font-bold text-gradient">Seoul District Quiz</h2>
+            <div id="progress-area" class="bg-blue-50 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full border border-blue-100">
+                <span class="text-xs sm:text-sm font-bold text-blue-600"><span id="current-question">0</span> / <span id="total-questions">0</span></span>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
             <!-- Left: Map -->
             <div class="lg:col-span-7">
                 <div id="map"></div>
@@ -132,9 +132,9 @@
 
             <!-- Right: Controls -->
             <div class="lg:col-span-5 flex flex-col justify-between">
-                <div id="question-area" class="text-center mb-6 bg-white/50 p-4 rounded-2xl border border-white/50">
-                    <p id="question-text" class="text-xl font-bold text-gray-800 leading-tight mb-2">Which district is highlighted in red?</p>
-                    <button id="hint-btn" class="mx-auto text-xs bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 px-4 py-1.5 rounded-full transition-all flex items-center gap-1.5 shadow-sm" style="display: none;">
+                <div id="question-area" class="text-center mb-4 sm:mb-6 bg-white/50 p-3 sm:p-4 rounded-2xl border border-white/50">
+                    <p id="question-text" class="text-base sm:text-xl font-bold text-gray-800 leading-tight mb-2">Which district is highlighted in red?</p>
+                    <button id="hint-btn" class="mx-auto text-[10px] sm:text-xs bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full transition-all flex items-center gap-1.5 shadow-sm" style="display: none;">
                         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.477.859h4z"></path></svg>
                         Hint <span class="opacity-60">(-0.5pt)</span> | Used: <span id="hints-remaining" class="font-bold">0</span>
                     </button>
