@@ -39,8 +39,8 @@ body::before {
 }
 
 #map {
-    height: 35vh;
-    min-height: 250px;
+    height: 40vh;
+    min-height: 300px;
     max-height: 500px;
     width: 100%;
     border-radius: 1.25rem;
