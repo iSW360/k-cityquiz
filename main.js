@@ -15,27 +15,23 @@ const mapErrorInfo = document.getElementById('map-error-info');
 const hintBtn = document.getElementById('hint-btn');
 const hintsRemainingElement = document.getElementById('hints-remaining');
 
-let map;
-let marker;
-let geoJsonLayer;
-let autoNextTimer;
-let countdownInterval;
-let totalHintsUsed = 0;
-let currentQuestionHintUsed = false;
+let map, marker, geoJsonLayer, autoNextTimer, countdownInterval;
+let totalHintsUsed = 0, currentQuestionHintUsed = false;
 
-// --- 타이머 관련 변수 ---
-let questionTimer = null;
-let questionTimeLeft = 0;
+// --- 타이머 ---
+let questionTimer = null, questionTimeLeft = 0;
 const QUESTION_TIME_LIMIT = 10;
 
-// --- 최고 점수 / 통계 / 소요 시간 ---
-let gameStartTime = null;      // 게임 시작 시각
-let gameElapsedSec = 0;        // 게임 총 소요 시간(초)
-let answerLog = [];            // 문제별 정오답 기록 [{name, correct, timeTaken}]
-const LS_BEST = 'kcityquiz_best';      // localStorage 키 – 최고 점수
-const LS_STATS = 'kcityquiz_stats';    // localStorage 키 – 지역별 통계
+// --- 점수 / 통계 / 시간 ---
+let gameStartTime = null, gameElapsedSec = 0, answerLog = [];
+const LS_BEST  = 'kcityquiz_best';
+const LS_STATS = 'kcityquiz_stats';
 
-// --- 데이터 시작 (힌트 추가) ---
+// --- 일일 챌린지 ---
+const LS_DAILY = 'kcityquiz_daily';
+let isDailyMode = false;
+
+// --- 데이터 ---
 const locations = [
     { name: "서울", lat: 37.5665, lng: 126.9780, zoom: 9, geoName: "서울특별시", hint: "남산타워와 한강이 흐르는 대한민국의 수도" },
     { name: "부산", lat: 35.1796, lng: 129.0756, zoom: 9, geoName: "부산광역시", hint: "해운대 해수욕장과 자갈치 시장이 유명한 항구 도시" },
@@ -127,7 +123,6 @@ const locations = [
     { name: "가평군", lat: 37.8318, lng: 127.5096, zoom: 10, geoName: "가평군", hint: "잣 고장이며 아침고요수목원과 가평 펜션지가 유명함" },
     { name: "양평군", lat: 37.4916, lng: 127.4879, zoom: 10, geoName: "양평군", hint: "두물머리와 용문사 은행나무가 유명한 전원 도시" },
     { name: "연천군", lat: 38.0964, lng: 127.0744, zoom: 10, geoName: "연천군", hint: "구석기 유적지와 태풍전망대가 있는 최전방 접경지" },
-    { name: "춘천시", lat: 37.8813, lng: 127.7298, zoom: 10, geoName: "춘천시", hint: "닭갈비와 막국수, 남이섬으로 유명한 호반의 도시" },
     { name: "고성군", lat: 38.3804, lng: 128.4678, zoom: 10, geoName: "고성군", hint: "금강산으로 향하는 통일전망대가 있는 동해안 군" },
     { name: "양구군", lat: 38.1093, lng: 127.9893, zoom: 10, geoName: "양구군", hint: "한반도의 정중앙 지점이 위치한 국토 정중앙의 고장" },
     { name: "양양군", lat: 38.0763, lng: 128.6219, zoom: 10, geoName: "양양군", hint: "송이버섯과 낙산사, 서핑 명소로 떠오른 해변 도시" },
@@ -186,14 +181,9 @@ const locations = [
     { name: "하동군", lat: 35.0673, lng: 127.7516, zoom: 10, geoName: "하동군", hint: "화개장터와 최참판댁, 야생 녹차가 유명한 고장" },
     { name: "합천군", lat: 35.5667, lng: 128.1658, zoom: 10, geoName: "합천군", hint: "해인사 팔만대장경과 황매산 철쭉, 합천 영상테마파크" }
 ];
-// --- 데이터 끝 ---
 
-
-let shuffledGameLocations = [];
-let currentQuestionIndex = 0;
-let score = 0;
-let correctAnswerName = '';
-let numOptions = 4;
+let shuffledGameLocations = [], currentQuestionIndex = 0, score = 0;
+let correctAnswerName = '', numOptions = 4;
 const MAX_QUESTIONS_PER_GAME = 10;
 const PROVINCE_VIEW_ZOOM = 6;
 const CITY_VIEW_DELAY = 1500;
@@ -202,42 +192,166 @@ const provinceHueMap = {
     '서울': 210, '부산': 10, '대구': 30, '인천': 270,
     '광주': 160, '대전': 340, '울산': 20, '세종': 200,
     '경기': 180, '강원': 120, '충북': 300, '충남': 320,
-    '전북': 60, '전남': 90, '경북': 0, '경남': 50,
-    '제주': 240
+    '전북': 60, '전남': 90, '경북': 0, '경남': 50, '제주': 240
 };
 
 function getProvinceFromCode(code) {
-    const prefix = code.substring(0, 2);
-    const provinceCodeMap = {
-        '11': '서울', '21': '부산', '22': '대구', '23': '인천',
-        '24': '광주', '25': '대전', '26': '울산', '29': '세종',
-        '31': '경기', '32': '강원특별자치도', '33': '충북', '34': '충남',
-        '35': '전북특별자치도', '36': '전남', '37': '경북', '38': '경남',
-        '39': '제주'
+    const map = {
+        '11':'서울','21':'부산','22':'대구','23':'인천','24':'광주','25':'대전',
+        '26':'울산','29':'세종','31':'경기','32':'강원특별자치도','33':'충북',
+        '34':'충남','35':'전북특별자치도','36':'전남','37':'경북','38':'경남','39':'제주'
     };
-    return provinceCodeMap[prefix] || '기타';
+    return map[code.substring(0,2)] || '기타';
 }
 
 function getColorForRegion(name, code) {
-    const province = getProvinceFromCode(code);
-    const provinceKey = province.substring(0, 2);
-    const hue = provinceHueMap[provinceKey] || provinceHueMap[province] || 0;
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) {
-        hash += name.charCodeAt(i);
-    }
-    const lightness = 40 + (hash % 30);
-    return `hsl(${hue}, 60%, ${lightness}%)`;
+    const p = getProvinceFromCode(code);
+    const hue = provinceHueMap[p.substring(0,2)] || 0;
+    let h = 0; for (let i=0;i<name.length;i++) h+=name.charCodeAt(i);
+    return `hsl(${hue},60%,${40+(h%30)}%)`;
 }
 
 // =============================================
-// 타이머 UI 생성 함수
+// 일일 챌린지
+// =============================================
+function getTodayKey() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function getDailyLocations() {
+    const seed = parseInt(getTodayKey().replace(/-/g,''), 10);
+    const arr = [...locations];
+    let s = seed;
+    function rand() {
+        s |= 0; s = s + 0x6D2B79F5 | 0;
+        let t = Math.imul(s ^ s>>>15, 1|s);
+        t = t + Math.imul(t ^ t>>>7, 61|t) ^ t;
+        return ((t ^ t>>>14)>>>0) / 4294967296;
+    }
+    for (let i = arr.length-1; i>0; i--) {
+        const j = Math.floor(rand()*(i+1));
+        [arr[i],arr[j]] = [arr[j],arr[i]];
+    }
+    return arr.slice(0, MAX_QUESTIONS_PER_GAME);
+}
+
+function getDailyStatus() {
+    const saved = JSON.parse(localStorage.getItem(LS_DAILY) || 'null');
+    return (saved && saved.date === getTodayKey()) ? saved : null;
+}
+
+function saveDailyResult(score, elapsed) {
+    localStorage.setItem(LS_DAILY, JSON.stringify({ date: getTodayKey(), score, elapsed }));
+}
+
+function startDailyChallenge() {
+    const status = getDailyStatus();
+    if (status) {
+        alert(`오늘의 챌린지는 이미 완료했어요! 🎉\n점수: ${status.score} / ${MAX_QUESTIONS_PER_GAME}\n내일 다시 도전하세요!`);
+        return;
+    }
+    isDailyMode = true;
+    numOptions = 4;
+    difficultySelector.style.display = 'none';
+    quizContainer.style.display = 'block';
+    startGame(true);
+}
+
+// =============================================
+// 결과 이미지 생성 (Canvas)
+// =============================================
+function generateResultImage(score, total, accuracy, timeStr, isDaily) {
+    return new Promise(resolve => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 800; canvas.height = 420;
+        const ctx = canvas.getContext('2d');
+
+        // 배경
+        const bg = ctx.createLinearGradient(0,0,800,420);
+        bg.addColorStop(0,'#eef2ff'); bg.addColorStop(1,'#faf5ff');
+        ctx.fillStyle = bg;
+        ctx.beginPath(); ctx.roundRect(0,0,800,420,24); ctx.fill();
+
+        // 상단 컬러 바
+        const bar = ctx.createLinearGradient(0,0,800,0);
+        bar.addColorStop(0,'#6366f1'); bar.addColorStop(0.5,'#a855f7'); bar.addColorStop(1,'#ec4899');
+        ctx.fillStyle = bar; ctx.fillRect(0,0,800,8);
+
+        // 타이틀
+        ctx.fillStyle = '#1e1b4b'; ctx.font = 'bold 30px sans-serif'; ctx.textAlign = 'center';
+        ctx.fillText(isDaily ? `📅 오늘의 챌린지 · ${getTodayKey()}` : '📍 대한민국 도시 퀴즈', 400, 65);
+
+        // 카드 3개
+        const cards = [
+            { label:'최종 점수', value:`${score}/${total}`, color:'#6366f1', bg:'#eef2ff' },
+            { label:'정답률',   value:`${accuracy}%`,      color:'#059669', bg:'#ecfdf5' },
+            { label:'소요 시간', value:timeStr,             color:'#d97706', bg:'#fffbeb' },
+        ];
+        cards.forEach((c,i) => {
+            const x=50+i*250, y=100, w=220, h=120;
+            ctx.fillStyle=c.bg; ctx.beginPath(); ctx.roundRect(x,y,w,h,16); ctx.fill();
+            ctx.fillStyle=c.color; ctx.font='bold 40px sans-serif'; ctx.textAlign='center';
+            ctx.fillText(c.value, x+w/2, y+68);
+            ctx.font='15px sans-serif'; ctx.fillStyle='#6b7280';
+            ctx.fillText(c.label, x+w/2, y+98);
+        });
+
+        // 정오답 바
+        ctx.fillStyle='#374151'; ctx.font='bold 17px sans-serif'; ctx.textAlign='left';
+        ctx.fillText('정오답', 50, 260);
+        const bw=700, bh=26, correctW=Math.round(bw*(accuracy/100));
+        ctx.fillStyle='#d1fae5'; ctx.beginPath(); ctx.roundRect(50,270,bw,bh,13); ctx.fill();
+        if(correctW>0){ ctx.fillStyle='#10b981'; ctx.beginPath(); ctx.roundRect(50,270,correctW,bh,13); ctx.fill(); }
+        if(correctW>50){ ctx.fillStyle='#fff'; ctx.font='bold 13px sans-serif'; ctx.textAlign='center'; ctx.fillText(`✅ ${accuracy}%`, 50+correctW/2, 288); }
+
+        // URL
+        ctx.fillStyle='#9ca3af'; ctx.font='14px sans-serif'; ctx.textAlign='center';
+        ctx.fillText('k-cityquiz.pages.dev  |  매일 도전하세요!', 400, 390);
+
+        resolve(canvas.toDataURL('image/png'));
+    });
+}
+
+async function shareResultImage(score, total, accuracy, timeStr, isDaily) {
+    try {
+        const dataUrl = await generateResultImage(score, total, accuracy, timeStr, isDaily);
+        const link = document.createElement('a');
+        link.download = isDaily ? `도시퀴즈_챌린지_${getTodayKey()}.png` : `도시퀴즈_${score}점.png`;
+        link.href = dataUrl; link.click();
+    } catch(e) { alert('이미지 생성에 실패했습니다.'); }
+}
+
+// =============================================
+// 카카오톡 공유
+// =============================================
+function shareKakao(score, total, accuracy, timeStr, isDaily) {
+    const url = window.location.href.split('?')[0];
+    const title = isDaily ? `📅 오늘의 챌린지 | 도시 퀴즈` : `📍 대한민국 도시 퀴즈 결과`;
+    const desc = `점수: ${score}/${total} · 정답률 ${accuracy}% · ${timeStr}\n나도 도전해봐!`;
+    if (window.Kakao && window.Kakao.isInitialized()) {
+        window.Kakao.Share.sendDefault({
+            objectType: 'feed',
+            content: {
+                title, description: desc,
+                imageUrl: 'https://isw360.github.io/k-cityquiz/korea_seoul_map.png',
+                link: { mobileWebUrl: url, webUrl: url }
+            },
+            buttons: [{ title:'나도 도전하기', link:{ mobileWebUrl:url, webUrl:url } }]
+        });
+    } else {
+        const text = `${title}\n${desc}\n👉 ${url}`;
+        navigator.clipboard.writeText(text).then(() =>
+            alert('카카오 SDK가 없어 클립보드에 복사했어요!\n카카오톡에 붙여넣기 하세요 😊'));
+    }
+}
+
+// =============================================
+// 타이머 UI
 // =============================================
 function createTimerUI() {
-    // 기존 타이머가 있으면 제거
     const existing = document.getElementById('question-timer');
     if (existing) existing.remove();
-
     const timerEl = document.createElement('div');
     timerEl.id = 'question-timer';
     timerEl.className = 'flex items-center justify-center gap-2 mb-3';
@@ -247,175 +361,114 @@ function createTimerUI() {
         </div>
         <span id="timer-text" class="text-sm font-bold text-indigo-600 min-w-[2.5rem] text-right">${QUESTION_TIME_LIMIT}초</span>
     `;
-
-    // question-area 위에 삽입
     const questionArea = document.getElementById('question-area');
     questionArea.parentNode.insertBefore(timerEl, questionArea);
 }
 
 function startQuestionTimer() {
-    // 기존 타이머 정리
     if (questionTimer) clearInterval(questionTimer);
-
     questionTimeLeft = QUESTION_TIME_LIMIT;
     createTimerUI();
-
     const timerBar = document.getElementById('timer-bar');
     const timerText = document.getElementById('timer-text');
-
     questionTimer = setInterval(() => {
         questionTimeLeft--;
-
-        // 바 너비 업데이트
         const pct = (questionTimeLeft / QUESTION_TIME_LIMIT) * 100;
         if (timerBar) timerBar.style.width = pct + '%';
         if (timerText) timerText.textContent = questionTimeLeft + '초';
-
-        // 색상 변화: 남은 시간에 따라
         if (timerBar) {
-            if (questionTimeLeft <= 5) {
+            if (questionTimeLeft <= 3) {
                 timerBar.className = 'h-3 rounded-full transition-all duration-1000 ease-linear bg-red-500';
                 if (timerText) timerText.className = 'text-sm font-bold text-red-600 min-w-[2.5rem] text-right';
-            } else if (questionTimeLeft <= 10) {
+            } else if (questionTimeLeft <= 6) {
                 timerBar.className = 'h-3 rounded-full transition-all duration-1000 ease-linear bg-amber-500';
                 if (timerText) timerText.className = 'text-sm font-bold text-amber-600 min-w-[2.5rem] text-right';
             }
         }
-
-        // 시간 초과
-        if (questionTimeLeft <= 0) {
-            clearInterval(questionTimer);
-            handleTimeOut();
-        }
+        if (questionTimeLeft <= 0) { clearInterval(questionTimer); handleTimeOut(); }
     }, 1000);
 }
 
 function stopQuestionTimer() {
-    if (questionTimer) {
-        clearInterval(questionTimer);
-        questionTimer = null;
-    }
+    if (questionTimer) { clearInterval(questionTimer); questionTimer = null; }
 }
 
 function handleTimeOut() {
     stopQuestionTimer();
-
-    // 시간 초과도 오답으로 기록
     answerLog.push({ name: correctAnswerName, correct: false, timeTaken: QUESTION_TIME_LIMIT });
     saveLocationStats(correctAnswerName, false);
-
-    // 모든 버튼 비활성화
     Array.from(optionsArea.children).forEach(btn => {
         btn.disabled = true;
         btn.classList.add('opacity-70', 'cursor-not-allowed');
-        // 정답 버튼 표시
         if (btn.textContent === correctAnswerName) {
-            btn.classList.remove('bg-white', 'text-indigo-700', 'border-indigo-300', 'opacity-70');
-            btn.classList.add('bg-green-500', 'text-white', 'border-green-700');
+            btn.classList.remove('bg-white','text-indigo-700','border-indigo-300','opacity-70');
+            btn.classList.add('bg-green-500','text-white','border-green-700');
         }
     });
-
     feedbackTextElement.innerHTML = `<span class="text-orange-600 font-bold">⏰ 시간 초과! 정답은 <strong>${correctAnswerName}</strong> 입니다.</span>`;
-    feedbackTextElement.className = 'text-md font-medium';
-
     const btnLabel = (currentQuestionIndex < shuffledGameLocations.length - 1) ? '다음 문제' : '결과 보기';
     nextQuestionBtn.textContent = `${btnLabel} (3초)`;
     nextQuestionBtn.style.display = 'inline-block';
     hintBtn.style.display = 'none';
-
     let countdown = 3;
     countdownInterval = setInterval(() => {
         countdown--;
-        if (countdown > 0) {
-            nextQuestionBtn.textContent = `${btnLabel} (${countdown}초)`;
-        } else {
-            clearInterval(countdownInterval);
-        }
+        if (countdown > 0) nextQuestionBtn.textContent = `${btnLabel} (${countdown}초)`;
+        else clearInterval(countdownInterval);
     }, 1000);
-
     autoNextTimer = setTimeout(() => {
-        if (currentQuestionIndex < shuffledGameLocations.length - 1) {
-            moveToNextQuestion();
-        } else {
-            endGame();
-        }
+        if (currentQuestionIndex < shuffledGameLocations.length - 1) moveToNextQuestion();
+        else endGame();
     }, 3000);
 }
-
-// =============================================
 
 async function initMap() {
     mapErrorInfo.textContent = '지도 및 행정구역 데이터 로딩 중...';
     if (map) map.remove();
     map = L.map('map').setView([36.5, 127.5], 7);
-
-    const cartoTileUrl = 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png';
-    const cartoAttribution = '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank">CARTO</a>';
-
-    L.tileLayer(cartoTileUrl, {
-        attribution: cartoAttribution,
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
         subdomains: 'abcd', maxZoom: 19,
-        errorTileUrl: 'https://placehold.co/256x256/f0f0f0/cc0000?text=Map+Tile+Error'
-    }).on('tileerror', function (event) {
-        mapErrorInfo.textContent = '지도 타일 로딩에 실패했습니다.';
-    }).addTo(map);
-
+        errorTileUrl: 'https://placehold.co/256x256/f0f0f0/cc0000?text=Error'
+    }).on('tileerror', () => { mapErrorInfo.textContent = '지도 타일 로딩에 실패했습니다.'; }).addTo(map);
     const geoJsonUrl = 'https://raw.githubusercontent.com/southkorea/southkorea-maps/master/kostat/2018/json/skorea-municipalities-2018-geo.json';
-
     try {
         const response = await fetch(geoJsonUrl);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         if (geoJsonLayer && map.hasLayer(geoJsonLayer)) geoJsonLayer.remove();
         geoJsonLayer = L.geoJSON(data, {
-            style: function (feature) {
-                const name = feature.properties.name || '';
-                const code = feature.properties.code || '';
-                const color = getColorForRegion(name, code);
-                return { color, weight: 1.2, opacity: 0.7, fillOpacity: 0.3, fillColor: color };
-            },
-            onEachFeature: function (feature, layer) {
+            style: f => { const c=getColorForRegion(f.properties.name||'',f.properties.code||''); return {color:c,weight:1.2,opacity:0.7,fillOpacity:0.3,fillColor:c}; },
+            onEachFeature: (f, layer) => {
                 layer.on({
-                    mouseover: function (e) {
-                        const l = e.target;
-                        l.setStyle({ weight: 3, fillOpacity: 0.4 });
-                        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) l.bringToFront();
-                    },
-                    mouseout: function (e) {
-                        if (geoJsonLayer) geoJsonLayer.resetStyle(e.target);
-                    }
+                    mouseover: e => { e.target.setStyle({weight:3,fillOpacity:0.4}); if(!L.Browser.ie&&!L.Browser.opera&&!L.Browser.edge) e.target.bringToFront(); },
+                    mouseout:  e => geoJsonLayer && geoJsonLayer.resetStyle(e.target)
                 });
             }
         }).addTo(map);
         mapErrorInfo.textContent = '';
-    } catch (error) {
-        mapErrorInfo.textContent = '행정구역 외곽선 데이터 로딩에 실패했습니다.';
-    }
-
-    marker = L.marker([0, 0], {
-        icon: L.icon({
-            iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-            iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34],
-            shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png', shadowSize: [41, 41]
-        })
-    });
+    } catch (e) { mapErrorInfo.textContent = '행정구역 외곽선 데이터 로딩에 실패했습니다.'; }
+    marker = L.marker([0,0], { icon: L.icon({
+        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+        iconSize:[25,41], iconAnchor:[12,41], popupAnchor:[1,-34],
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png', shadowSize:[41,41]
+    })});
 }
 
 function highlightCurrentQuestionRegion(questionGeoName) {
     if (geoJsonLayer) {
-        geoJsonLayer.eachLayer(function (layer) {
-            const featureName = layer.feature.properties.name || '';
-            if (featureName.startsWith(questionGeoName)) {
-                layer.setStyle({ weight: 4, color: '#c00', fillOpacity: 0.6, fillColor: '#ffeb3b' });
-                if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) layer.bringToFront();
-            } else {
-                geoJsonLayer.resetStyle(layer);
-            }
+        geoJsonLayer.eachLayer(layer => {
+            const fn = layer.feature.properties.name || '';
+            if (fn.startsWith(questionGeoName)) {
+                layer.setStyle({weight:4,color:'#c00',fillOpacity:0.6,fillColor:'#ffeb3b'});
+                if (!L.Browser.ie&&!L.Browser.opera&&!L.Browser.edge) layer.bringToFront();
+            } else { geoJsonLayer.resetStyle(layer); }
         });
     }
 }
 
 function selectDifficulty(level) {
+    isDailyMode = false;
     numOptions = (level === 2) ? 8 : 4;
     difficultySelector.style.display = 'none';
     quizContainer.style.display = 'block';
@@ -426,11 +479,8 @@ function showDifficultyScreen() {
     stopQuestionTimer();
     if (autoNextTimer) clearTimeout(autoNextTimer);
     if (countdownInterval) clearInterval(countdownInterval);
-
-    // 타이머 UI 제거
     const timerEl = document.getElementById('question-timer');
     if (timerEl) timerEl.remove();
-
     quizContainer.style.display = 'none';
     difficultySelector.style.display = 'block';
     questionTextElement.textContent = '게임 시작 버튼을 눌러주세요!';
@@ -441,234 +491,153 @@ function showDifficultyScreen() {
     hintBtn.style.display = 'none';
 }
 
-async function startGame() {
-    score = 0;
-    currentQuestionIndex = 0;
-    totalHintsUsed = 0;
+async function startGame(daily = false) {
+    isDailyMode = daily;
+    score = 0; currentQuestionIndex = 0; totalHintsUsed = 0;
     currentQuestionHintUsed = false;
-    hintsRemainingElement.textContent = totalHintsUsed;
-    gameStartTime = Date.now();
-    gameElapsedSec = 0;
-    answerLog = [];
+    hintsRemainingElement.textContent = 0;
+    gameStartTime = Date.now(); gameElapsedSec = 0; answerLog = [];
 
-    const allShuffledLocations = shuffleArray([...locations]);
-    shuffledGameLocations = allShuffledLocations.slice(0, MAX_QUESTIONS_PER_GAME);
+    shuffledGameLocations = daily
+        ? getDailyLocations()
+        : shuffleArray([...locations]).slice(0, MAX_QUESTIONS_PER_GAME);
 
     totalQuestionsElement.textContent = shuffledGameLocations.length;
     progressArea.style.display = 'block';
-
     questionTextElement.textContent = "지도 로딩 중... 잠시만 기다려주세요.";
     restartBtn.disabled = true;
 
     if (!map) {
-        try {
-            await initMap();
-        } catch (e) {
-            mapErrorInfo.textContent = "지도 초기화에 실패했습니다.";
-            questionTextElement.textContent = "지도 로딩 실패! 새로고침하거나 나중에 다시 시도해주세요.";
-            restartBtn.disabled = false;
-            return;
-        }
+        try { await initMap(); }
+        catch(e) { mapErrorInfo.textContent="지도 초기화 실패."; restartBtn.disabled=false; return; }
     } else {
         if (marker && map.hasLayer(marker)) marker.remove();
-        if (geoJsonLayer) {
-            geoJsonLayer.eachLayer(function (layer) { geoJsonLayer.resetStyle(layer); });
-        }
+        if (geoJsonLayer) geoJsonLayer.eachLayer(l => geoJsonLayer.resetStyle(l));
     }
-
     restartBtn.disabled = false;
     restartBtn.textContent = '처음으로';
     nextQuestionBtn.style.display = 'none';
     hintBtn.style.display = 'inline-flex';
     hintBtn.disabled = false;
-    hintBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-
-    if (map) {
-        loadQuestion();
-    } else {
-        questionTextElement.textContent = "지도 로딩 실패! 게임을 진행할 수 없습니다.";
-    }
+    hintBtn.classList.remove('opacity-50','cursor-not-allowed');
+    if (map) loadQuestion();
 }
 
 function loadQuestion() {
-    if (currentQuestionIndex >= shuffledGameLocations.length) {
-        endGame();
-        return;
-    }
-
+    if (currentQuestionIndex >= shuffledGameLocations.length) { endGame(); return; }
     stopQuestionTimer();
     if (autoNextTimer) clearTimeout(autoNextTimer);
     if (countdownInterval) clearInterval(countdownInterval);
-
-    const currentLocation = shuffledGameLocations[currentQuestionIndex];
-    correctAnswerName = currentLocation.name;
+    const loc = shuffledGameLocations[currentQuestionIndex];
+    correctAnswerName = loc.name;
     currentQuestionHintUsed = false;
-    questionTimeLeft = QUESTION_TIME_LIMIT; // 문제 시작 시각 초기화
-
+    questionTimeLeft = QUESTION_TIME_LIMIT;
     questionTextElement.textContent = "이 표시는 어느 지역을 나타낼까요?";
     currentQuestionElement.textContent = currentQuestionIndex + 1;
-
-    if (geoJsonLayer) {
-        geoJsonLayer.eachLayer(function (layer) { geoJsonLayer.resetStyle(layer); });
-    }
-    if (currentLocation.geoName) {
-        highlightCurrentQuestionRegion(currentLocation.geoName);
-    }
-
-    const latLng = [currentLocation.lat, currentLocation.lng];
+    if (geoJsonLayer) geoJsonLayer.eachLayer(l => geoJsonLayer.resetStyle(l));
+    if (loc.geoName) highlightCurrentQuestionRegion(loc.geoName);
+    const latLng = [loc.lat, loc.lng];
     if (marker) marker.setLatLng(latLng).addTo(map);
     else marker = L.marker(latLng).addTo(map);
-
     map.setView(latLng, PROVINCE_VIEW_ZOOM);
-
     setTimeout(() => {
-        if (map) {
-            const adjustedZoom = (currentLocation.zoom || 10) - 3;
-            const finalZoom = Math.max(adjustedZoom, PROVINCE_VIEW_ZOOM - 1);
-            map.flyTo(latLng, finalZoom, { duration: 1 });
-        }
+        if (map) map.flyTo(latLng, Math.max((loc.zoom||10)-3, PROVINCE_VIEW_ZOOM-1), {duration:1});
     }, CITY_VIEW_DELAY);
-
     optionsArea.innerHTML = '';
-    const options = generateOptions(correctAnswerName);
-
-    options.forEach(optionName => {
-        const button = document.createElement('button');
-        button.textContent = optionName;
-        button.className = "option-button w-full bg-white hover:bg-indigo-100 text-indigo-700 font-semibold py-2 px-3 border border-indigo-300 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400";
-        button.onclick = () => handleAnswer(optionName, button);
-        optionsArea.appendChild(button);
+    generateOptions(correctAnswerName).forEach(optionName => {
+        const btn = document.createElement('button');
+        btn.textContent = optionName;
+        btn.className = "option-button w-full bg-white hover:bg-indigo-100 text-indigo-700 font-semibold py-2 px-3 border border-indigo-300 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400";
+        btn.onclick = () => handleAnswer(optionName, btn);
+        optionsArea.appendChild(btn);
     });
-
     feedbackTextElement.textContent = '';
     feedbackTextElement.className = 'text-md sm:text-lg font-medium';
     nextQuestionBtn.style.display = 'none';
     hintBtn.style.display = 'inline-flex';
-
-    // 타이머 시작 (지도 이동 후 시작)
-    setTimeout(() => {
-        startQuestionTimer();
-    }, CITY_VIEW_DELAY + 1000);
+    setTimeout(() => startQuestionTimer(), CITY_VIEW_DELAY + 1000);
 }
 
 function handleAnswer(selectedName, buttonElement) {
     stopQuestionTimer();
     if (autoNextTimer) clearTimeout(autoNextTimer);
     if (countdownInterval) clearInterval(countdownInterval);
-
     Array.from(optionsArea.children).forEach(btn => {
         btn.disabled = true;
         btn.classList.remove('hover:bg-indigo-100');
-        btn.classList.add('opacity-70', 'cursor-not-allowed');
+        btn.classList.add('opacity-70','cursor-not-allowed');
     });
-
-    const currentLocation = shuffledGameLocations[currentQuestionIndex];
+    const loc = shuffledGameLocations[currentQuestionIndex];
     const isCorrect = selectedName === correctAnswerName;
-
-    // 소요 시간 및 정오답 기록
     const timeTaken = QUESTION_TIME_LIMIT - questionTimeLeft;
     answerLog.push({ name: correctAnswerName, correct: isCorrect, timeTaken });
     saveLocationStats(correctAnswerName, isCorrect);
-
-    // 남은 시간 보너스 점수 계산
     const timeBonus = questionTimeLeft > 0 ? (questionTimeLeft / QUESTION_TIME_LIMIT) : 0;
-
     if (isCorrect) {
-        let gainedScore;
-        if (currentQuestionHintUsed) {
-            gainedScore = 0.5;
-        } else {
-            // 빠를수록 최대 1점 (기본 0.5 + 시간 보너스 최대 0.5)
-            gainedScore = Math.round((0.5 + timeBonus * 0.5) * 10) / 10;
-        }
-        score += gainedScore;
-        const timeMsg = currentQuestionHintUsed ? '' : ` ⚡ 빠른 정답 보너스!`;
-        feedbackTextElement.innerHTML = `<span class="text-green-600 font-bold">정답입니다! 🎉 (+${gainedScore}점)${timeMsg}</span><br><span class="text-gray-600 text-xs sm:text-sm mt-1">📍 ${maskHint(currentLocation.hint, correctAnswerName)}</span>`;
-        buttonElement.classList.remove('bg-white', 'text-indigo-700', 'border-indigo-300');
-        buttonElement.classList.add('bg-green-500', 'text-white', 'border-green-700');
+        let gained = currentQuestionHintUsed ? 0.5 : Math.round((0.5 + timeBonus*0.5)*10)/10;
+        score += gained;
+        const timeMsg = currentQuestionHintUsed ? '' : ' ⚡ 빠른 정답 보너스!';
+        feedbackTextElement.innerHTML = `<span class="text-green-600 font-bold">정답입니다! 🎉 (+${gained}점)${timeMsg}</span><br><span class="text-gray-600 text-xs sm:text-sm mt-1">📍 ${maskHint(loc.hint, correctAnswerName)}</span>`;
+        buttonElement.classList.remove('bg-white','text-indigo-700','border-indigo-300');
+        buttonElement.classList.add('bg-green-500','text-white','border-green-700');
     } else {
-        feedbackTextElement.innerHTML = `<span class="text-red-600 font-bold">오답입니다. 정답은 ${correctAnswerName} 입니다. 😥</span><br><span class="text-gray-600 text-xs sm:text-sm mt-1">📍 ${maskHint(currentLocation.hint, correctAnswerName)}</span>`;
-        buttonElement.classList.remove('bg-white', 'text-indigo-700', 'border-indigo-300');
-        buttonElement.classList.add('bg-red-500', 'text-white', 'border-red-700');
-
+        feedbackTextElement.innerHTML = `<span class="text-red-600 font-bold">오답입니다. 정답은 ${correctAnswerName} 입니다. 😥</span><br><span class="text-gray-600 text-xs sm:text-sm mt-1">📍 ${maskHint(loc.hint, correctAnswerName)}</span>`;
+        buttonElement.classList.remove('bg-white','text-indigo-700','border-indigo-300');
+        buttonElement.classList.add('bg-red-500','text-white','border-green-700');
         Array.from(optionsArea.children).forEach(btn => {
             if (btn.textContent === correctAnswerName) {
-                btn.classList.remove('bg-white', 'text-indigo-700', 'border-indigo-300', 'opacity-70');
-                btn.classList.add('bg-green-500', 'text-white', 'border-green-700');
+                btn.classList.remove('bg-white','text-indigo-700','border-indigo-300','opacity-70');
+                btn.classList.add('bg-green-500','text-white','border-green-700');
             }
         });
     }
-
     let countdown = 4;
-    const btnLabel = (currentQuestionIndex < shuffledGameLocations.length - 1) ? '다음 문제' : '결과 보기';
+    const btnLabel = (currentQuestionIndex < shuffledGameLocations.length-1) ? '다음 문제' : '결과 보기';
     nextQuestionBtn.textContent = `${btnLabel} (${countdown}초)`;
     nextQuestionBtn.style.display = 'inline-block';
     hintBtn.style.display = 'none';
-
     countdownInterval = setInterval(() => {
         countdown--;
-        if (countdown > 0) {
-            nextQuestionBtn.textContent = `${btnLabel} (${countdown}초)`;
-        } else {
-            clearInterval(countdownInterval);
-        }
+        if (countdown>0) nextQuestionBtn.textContent = `${btnLabel} (${countdown}초)`;
+        else clearInterval(countdownInterval);
     }, 1000);
-
     autoNextTimer = setTimeout(() => {
-        if (currentQuestionIndex < shuffledGameLocations.length - 1) {
-            moveToNextQuestion();
-        } else {
-            endGame();
-        }
+        if (currentQuestionIndex < shuffledGameLocations.length-1) moveToNextQuestion();
+        else endGame();
     }, 4000);
 }
 
 function useHint() {
-    if (!currentQuestionHintUsed) {
-        totalHintsUsed++;
-        currentQuestionHintUsed = true;
-        hintsRemainingElement.textContent = totalHintsUsed;
-    }
-    const currentLocation = shuffledGameLocations[currentQuestionIndex];
-    feedbackTextElement.textContent = `💡 힌트: ${maskHint(currentLocation.hint, correctAnswerName)}`;
+    if (!currentQuestionHintUsed) { totalHintsUsed++; currentQuestionHintUsed=true; hintsRemainingElement.textContent=totalHintsUsed; }
+    const loc = shuffledGameLocations[currentQuestionIndex];
+    feedbackTextElement.textContent = `💡 힌트: ${maskHint(loc.hint, correctAnswerName)}`;
     feedbackTextElement.className = 'text-md font-medium text-amber-600';
 }
 
-function moveToNextQuestion() {
-    currentQuestionIndex++;
-    loadQuestion();
-}
+function moveToNextQuestion() { currentQuestionIndex++; loadQuestion(); }
 
 function endGame() {
     stopQuestionTimer();
     if (autoNextTimer) clearTimeout(autoNextTimer);
     if (countdownInterval) clearInterval(countdownInterval);
-
     const timerEl = document.getElementById('question-timer');
     if (timerEl) timerEl.remove();
 
-    // 게임 소요 시간 계산
-    gameElapsedSec = Math.round((Date.now() - gameStartTime) / 1000);
-    const mins = Math.floor(gameElapsedSec / 60);
-    const secs = gameElapsedSec % 60;
-    const timeStr = mins > 0 ? `${mins}분 ${secs}초` : `${secs}초`;
-
-    const roundedScore = Math.round(score * 10) / 10;
+    gameElapsedSec = Math.round((Date.now()-gameStartTime)/1000);
+    const mins = Math.floor(gameElapsedSec/60), secs = gameElapsedSec%60;
+    const timeStr = mins>0 ? `${mins}분 ${secs}초` : `${secs}초`;
+    const roundedScore = Math.round(score*10)/10;
     const total = shuffledGameLocations.length;
-    const correctCount = answerLog.filter(l => l.correct).length;
-    const accuracy = Math.round((correctCount / total) * 100);
-    const avgTime = answerLog.length
-        ? Math.round(answerLog.reduce((s, l) => s + l.timeTaken, 0) / answerLog.length)
-        : 0;
+    const correctCount = answerLog.filter(l=>l.correct).length;
+    const accuracy = Math.round((correctCount/total)*100);
+    const avgTime = answerLog.length ? Math.round(answerLog.reduce((s,l)=>s+l.timeTaken,0)/answerLog.length) : 0;
 
-    // 최고 점수 처리
-    const prev = JSON.parse(localStorage.getItem(LS_BEST) || 'null');
-    const isNewBest = !prev || roundedScore > prev.score
-        || (roundedScore === prev.score && gameElapsedSec < prev.elapsed);
-    if (isNewBest) {
-        localStorage.setItem(LS_BEST, JSON.stringify({ score: roundedScore, elapsed: gameElapsedSec, date: new Date().toLocaleDateString('ko-KR') }));
-    }
+    const prev = JSON.parse(localStorage.getItem(LS_BEST)||'null');
+    const isNewBest = !prev || roundedScore>prev.score || (roundedScore===prev.score && gameElapsedSec<prev.elapsed);
+    if (isNewBest) localStorage.setItem(LS_BEST, JSON.stringify({score:roundedScore,elapsed:gameElapsedSec,date:new Date().toLocaleDateString('ko-KR')}));
     const bestData = JSON.parse(localStorage.getItem(LS_BEST));
+
+    if (isDailyMode) saveDailyResult(roundedScore, gameElapsedSec);
 
     questionTextElement.textContent = `게임 종료! 최종 점수: ${roundedScore} / ${total}`;
     progressArea.style.display = 'none';
@@ -676,11 +645,13 @@ function endGame() {
     nextQuestionBtn.style.display = 'none';
     restartBtn.textContent = '처음으로';
 
-    // 결과 패널 렌더링
+    const dailyBanner = isDailyMode
+        ? `<div class="flex items-center justify-center gap-2 bg-indigo-600 text-white rounded-xl px-4 py-2 text-sm font-bold">📅 오늘의 챌린지 완료! ${getTodayKey()}</div>`
+        : '';
+
     optionsArea.innerHTML = `
       <div class="col-span-4 space-y-4">
-
-        <!-- 요약 카드 -->
+        ${dailyBanner}
         <div class="grid grid-cols-3 gap-2 text-center">
           <div class="bg-indigo-50 rounded-xl p-3 border border-indigo-100">
             <p class="text-xs text-indigo-400 font-semibold mb-1">최종 점수</p>
@@ -696,8 +667,6 @@ function endGame() {
             <p class="text-xs text-amber-400">평균 ${avgTime}초/문제</p>
           </div>
         </div>
-
-        <!-- 최고 점수 -->
         <div class="flex items-center justify-between bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl px-4 py-3 border border-purple-100">
           <span class="text-sm font-bold text-purple-700">🏆 역대 최고 점수</span>
           <span class="text-sm font-bold text-purple-600">
@@ -705,135 +674,94 @@ function endGame() {
             ${isNewBest ? '<span class="ml-2 bg-yellow-400 text-white text-xs px-2 py-0.5 rounded-full">NEW!</span>' : ''}
           </span>
         </div>
-
-        <!-- 정답률 통계 -->
         <div>
           <p class="text-sm font-bold text-gray-600 mb-2">📊 이번 게임 정오답</p>
           <div class="space-y-1 max-h-48 overflow-y-auto pr-1">
-            ${answerLog.map(l => `
-              <div class="flex items-center justify-between text-xs px-3 py-1.5 rounded-lg ${l.correct ? 'bg-green-50 border border-green-100' : 'bg-red-50 border border-red-100'}">
-                <span class="${l.correct ? 'text-green-700' : 'text-red-700'} font-semibold">
-                  ${l.correct ? '✅' : '❌'} ${l.name}
-                </span>
+            ${answerLog.map(l=>`
+              <div class="flex items-center justify-between text-xs px-3 py-1.5 rounded-lg ${l.correct?'bg-green-50 border border-green-100':'bg-red-50 border border-red-100'}">
+                <span class="${l.correct?'text-green-700':'text-red-700'} font-semibold">${l.correct?'✅':'❌'} ${l.name}</span>
                 <span class="text-gray-400">${l.timeTaken}초</span>
-              </div>
-            `).join('')}
+              </div>`).join('')}
           </div>
         </div>
-
-        <!-- 자주 틀리는 지역 통계 -->
         ${renderWeakStats()}
-
-        <!-- 공유 버튼 -->
-        <button id="share-result-btn"
-          class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
-          </svg>
-          결과 공유하기
-        </button>
+        <div class="grid grid-cols-3 gap-2">
+          <button id="btn-img-share" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-2 rounded-xl shadow transition-all flex flex-col items-center gap-1 text-xs">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            이미지 저장
+          </button>
+          <button id="btn-kakao-share" class="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold py-3 px-2 rounded-xl shadow transition-all flex flex-col items-center gap-1 text-xs">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.477 2 10.5c0 2.627 1.638 4.938 4.125 6.3-.18.67-.657 2.43-.752 2.806-.117.46.169.454.356.33.146-.097 2.32-1.574 3.26-2.215.65.09 1.32.138 2.011.138 5.523 0 10-3.477 10-7.5S17.523 3 12 3z"/></svg>
+            카카오 공유
+          </button>
+          <button id="btn-link-share" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-2 rounded-xl shadow transition-all flex flex-col items-center gap-1 text-xs">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+            링크 복사
+          </button>
+        </div>
       </div>
     `;
 
-    document.getElementById('share-result-btn').onclick = () => {
-        const text = `📍 대한민국 도시 퀴즈\n점수: ${roundedScore}/${total} · 정답률 ${accuracy}% · ${timeStr}\n지금 도전! 👇\n${window.location.href}`;
-        navigator.clipboard.writeText(text).then(() => alert('결과가 클립보드에 복사되었습니다!'));
+    document.getElementById('btn-img-share').onclick = () => shareResultImage(roundedScore, total, accuracy, timeStr, isDailyMode);
+    document.getElementById('btn-kakao-share').onclick = () => shareKakao(roundedScore, total, accuracy, timeStr, isDailyMode);
+    document.getElementById('btn-link-share').onclick = () => {
+        const text = `📍 대한민국 도시 퀴즈\n점수: ${roundedScore}/${total} · 정답률 ${accuracy}% · ${timeStr}\n지금 도전! 👇\n${window.location.href.split('?')[0]}`;
+        navigator.clipboard.writeText(text).then(() => alert('링크가 클립보드에 복사되었습니다!'));
     };
 
     if (marker && map && map.hasLayer(marker)) marker.remove();
-    if (geoJsonLayer) {
-        geoJsonLayer.eachLayer(function (layer) { geoJsonLayer.resetStyle(layer); });
-    }
+    if (geoJsonLayer) geoJsonLayer.eachLayer(l => geoJsonLayer.resetStyle(l));
 }
 
-// =============================================
-// localStorage 지역 통계 저장/조회
-// =============================================
 function saveLocationStats(name, isCorrect) {
-    const stats = JSON.parse(localStorage.getItem(LS_STATS) || '{}');
-    if (!stats[name]) stats[name] = { correct: 0, wrong: 0 };
-    if (isCorrect) stats[name].correct++;
-    else stats[name].wrong++;
+    const stats = JSON.parse(localStorage.getItem(LS_STATS)||'{}');
+    if (!stats[name]) stats[name] = {correct:0, wrong:0};
+    if (isCorrect) stats[name].correct++; else stats[name].wrong++;
     localStorage.setItem(LS_STATS, JSON.stringify(stats));
 }
 
 function renderWeakStats() {
-    const stats = JSON.parse(localStorage.getItem(LS_STATS) || '{}');
-    const entries = Object.entries(stats)
-        .filter(([, v]) => v.wrong > 0)
-        .sort((a, b) => b[1].wrong - a[1].wrong)
-        .slice(0, 5);
-
-    if (entries.length === 0) return '';
-
-    const bars = entries.map(([name, v]) => {
-        const total = v.correct + v.wrong;
-        const wrongPct = Math.round((v.wrong / total) * 100);
-        return `
-          <div>
-            <div class="flex justify-between text-xs text-gray-500 mb-0.5">
-              <span class="font-semibold text-gray-700">${name}</span>
-              <span>${v.wrong}번 틀림 / ${total}번 출제</span>
-            </div>
-            <div class="w-full bg-gray-100 rounded-full h-2">
-              <div class="bg-red-400 h-2 rounded-full" style="width:${wrongPct}%"></div>
-            </div>
+    const stats = JSON.parse(localStorage.getItem(LS_STATS)||'{}');
+    const entries = Object.entries(stats).filter(([,v])=>v.wrong>0)
+        .sort((a,b)=>b[1].wrong-a[1].wrong).slice(0,5);
+    if (entries.length===0) return '';
+    const bars = entries.map(([name,v]) => {
+        const total=v.correct+v.wrong, pct=Math.round((v.wrong/total)*100);
+        return `<div>
+          <div class="flex justify-between text-xs text-gray-500 mb-0.5">
+            <span class="font-semibold text-gray-700">${name}</span>
+            <span>${v.wrong}번 틀림 / ${total}번 출제</span>
           </div>
-        `;
+          <div class="w-full bg-gray-100 rounded-full h-2">
+            <div class="bg-red-400 h-2 rounded-full" style="width:${pct}%"></div>
+          </div>
+        </div>`;
     }).join('');
-
-    return `
-      <div>
-        <p class="text-sm font-bold text-gray-600 mb-2">📉 자주 틀리는 지역 (누적)</p>
-        <div class="space-y-2">${bars}</div>
-      </div>
-    `;
+    return `<div><p class="text-sm font-bold text-gray-600 mb-2">📉 자주 틀리는 지역 (누적)</p><div class="space-y-2">${bars}</div></div>`;
 }
 
-// =============================================
-// 힌트에서 정답 지역명 자동 마스킹
-// 예) "평택항" → "〇〇항", "영덕 대게" → "〇〇 대게"
-// =============================================
 function maskHint(hint, locationName) {
-    // 지역 유형 접미사 제거: 시·군·구·동·읍 등
-    const baseName = locationName.replace(/(특별시|광역시|특별자치시|특별자치도|시|군|구|동|읍|면)$/, '');
-
-    // 마스킹 문자: 글자 수만큼 〇 반복
+    const baseName = locationName.replace(/(특별시|광역시|특별자치시|특별자치도|시|군|구|동|읍|면)$/,'');
     const mask = '〇'.repeat(baseName.length);
-
-    // 정규식: 지역명 전체(시/군/구 포함) + 기본명 모두 치환
-    // 예) "평택시" → "〇〇〇", "평택" → "〇〇"
-    const escaped = locationName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const baseEscaped = baseName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-    let masked = hint
-        .replace(new RegExp(escaped, 'g'), mask + locationName.slice(baseName.length)) // 시/군/구는 남김
-        .replace(new RegExp(baseEscaped, 'g'), mask); // 기본명만 있는 경우도 처리
-
-    return masked;
+    const escaped = locationName.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const baseEscaped = baseName.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    return hint
+        .replace(new RegExp(escaped,'g'), mask+locationName.slice(baseName.length))
+        .replace(new RegExp(baseEscaped,'g'), mask);
 }
 
 function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+    for (let i=array.length-1;i>0;i--) {
+        const j=Math.floor(Math.random()*(i+1));
+        [array[i],array[j]]=[array[j],array[i]];
     }
     return array;
 }
 
 function generateOptions(correctAnswer) {
-    const options = [correctAnswer];
-    const distractors = locations
-        .map(loc => loc.name)
-        .filter(name => name !== correctAnswer);
-
-    shuffleArray(distractors);
-
-    for (let i = 0; i < numOptions - 1 && i < distractors.length; i++) {
-        options.push(distractors[i]);
-    }
-
+    const options=[correctAnswer];
+    const distractors=shuffleArray(locations.map(l=>l.name).filter(n=>n!==correctAnswer));
+    for (let i=0;i<numOptions-1&&i<distractors.length;i++) options.push(distractors[i]);
     return shuffleArray(options);
 }
 
@@ -845,17 +773,11 @@ hintBtn.addEventListener('click', useHint);
 
 const toggleGuideBtn = document.getElementById('toggle-guide-btn');
 const detailedGuide = document.getElementById('detailed-guide');
-
 if (toggleGuideBtn && detailedGuide) {
     toggleGuideBtn.addEventListener('click', () => {
         const isHidden = detailedGuide.classList.contains('hidden');
-        if (isHidden) {
-            detailedGuide.classList.remove('hidden');
-            toggleGuideBtn.textContent = '게임 상세 소개 닫기';
-        } else {
-            detailedGuide.classList.add('hidden');
-            toggleGuideBtn.textContent = '게임 상세 소개 보기';
-        }
+        detailedGuide.classList.toggle('hidden', !isHidden);
+        toggleGuideBtn.textContent = isHidden ? '게임 상세 소개 닫기' : '게임 상세 소개 열기';
     });
 }
 
@@ -863,10 +785,6 @@ nextQuestionBtn.addEventListener('click', () => {
     stopQuestionTimer();
     if (autoNextTimer) clearTimeout(autoNextTimer);
     if (countdownInterval) clearInterval(countdownInterval);
-
-    if (currentQuestionIndex < shuffledGameLocations.length - 1) {
-        moveToNextQuestion();
-    } else {
-        endGame();
-    }
+    if (currentQuestionIndex < shuffledGameLocations.length-1) moveToNextQuestion();
+    else endGame();
 });

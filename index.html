@@ -32,7 +32,7 @@
     <meta name="description" content="대한민국 도시 퀴즈 - 한국의 지리와 행정구역을 재미있게 배워보세요. 서울, 부산, 대구 등 주요 도시와 군 위치 맞추기 게임.">
     <meta name="keywords" content="한국 지리, 도시 퀴즈, 행정구역, 지도 게임, 교육용 게임, 사회 공부, 서울 구 퀴즈, 지리 마스터">
     <link rel="canonical" href="https://isw360.github.io/k-cityquiz/index.html">
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://isw360.github.io/k-cityquiz/">
@@ -71,6 +71,12 @@
       }
     }
     </script>
+
+    <!-- 카카오 SDK -->
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
+     integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4"
+     crossorigin="anonymous"></script>
+    <script>Kakao.init('8cc1aa6cfa6d5cc22ea6fecf7b220d3e');</script>
 </head>
 
 <body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 selection:bg-indigo-200">
@@ -78,27 +84,23 @@
     <!-- 메인 대시보드 (난이도 선택) -->
     <div id="difficulty-selector" class="glass-card p-6 sm:p-10 w-full max-w-lg text-center relative overflow-hidden z-10">
         <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
-        
-<!-- 언어 전환 버튼 -->
-<div class="absolute top-4 right-4">
-    <a href="index_en.html" class="text-xs font-bold text-indigo-400 hover:text-indigo-600 border border-indigo-200 px-2 py-1 rounded-full transition-all">🇺🇸 English</a>
-</div>
 
-
-
+        <!-- 언어 전환 버튼 -->
+        <div class="absolute top-4 right-4">
+            <a href="index_en.html" class="text-xs font-bold text-indigo-400 hover:text-indigo-600 border border-indigo-200 px-2 py-1 rounded-full transition-all">🇺🇸 English</a>
+        </div>
 
         <h1 class="text-3xl sm:text-4xl font-extrabold mb-2 tracking-tight">
             <span class="text-gradient">대한민국 도시 퀴즈</span>
         </h1>
         <p class="text-gray-500 font-medium mb-8">당신의 지리 점수는 몇 점일까요?</p>
-        
+
         <!-- 대형 Hero 이미지 -->
         <div class="flex justify-center my-10 relative">
             <div class="relative">
-                <!-- 배경 물결 효과 -->
                 <div class="ripple-circle" style="top: 40%; left: 50%;"></div>
                 <div class="ripple-circle" style="top: 40%; left: 50%; animation-delay: 1s;"></div>
-                
+
                 <img
                     src="korea_map.png"
                     alt="대한민국 지도"
@@ -117,6 +119,7 @@
             </div>
         </div>
 
+        <!-- 난이도 버튼 -->
         <div class="grid grid-cols-2 gap-4 mt-4">
             <button id="level-1-btn" class="btn-modern bg-white text-indigo-600 border-2 border-indigo-100 font-bold py-2 px-4 rounded-2xl shadow-sm">
                 <span class="block text-xl">Level 1</span>
@@ -128,7 +131,15 @@
             </button>
         </div>
 
-        <div class="mt-8 pt-6 border-t border-gray-100/50">
+        <!-- ① 오늘의 챌린지 버튼 — 크기 작고 색상 약하게 -->
+        <div class="mt-3">
+            <button id="daily-btn"
+              class="w-full text-sm text-gray-400 hover:text-indigo-600 border border-gray-200 hover:border-indigo-300 bg-white/60 hover:bg-indigo-50/50 font-medium py-2 px-4 rounded-xl transition-all flex items-center justify-center gap-1.5">
+                📅 오늘의 챌린지
+            </button>
+        </div>
+
+        <div class="mt-6 pt-6 border-t border-gray-100/50">
             <a href="seoul.html" class="inline-flex items-center text-sm font-semibold text-indigo-600 hover:text-purple-600 transition-all group">
                 서울 구 퀴즈로 바로가기
                 <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
@@ -144,7 +155,7 @@
                 <span class="text-sm font-bold text-indigo-600"><span id="current-question">0</span> / <span id="total-questions">0</span></span>
             </div>
         </header>
-        
+
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <!-- 왼쪽: 지도 영역 -->
             <div class="lg:col-span-7">
@@ -186,7 +197,7 @@
                 <p class="text-gray-500 text-sm mb-4">대한민국의 모든 시, 군을 지도로 마스터해보세요!</p>
                 <button id="toggle-guide-btn" class="text-indigo-600 font-bold text-sm hover:underline decoration-2 underline-offset-4">상세 게임 가이드 열기</button>
             </div>
-            
+
             <article id="detailed-guide" class="hidden mt-8 pt-8 border-t border-gray-100/50">
                 <h3 class="text-xl font-bold text-gray-800 mb-4">대한민국 도시 퀴즈란?</h3>
                 <div class="grid sm:grid-cols-2 gap-6 text-gray-600 text-sm leading-relaxed">
@@ -201,7 +212,7 @@
                 </div>
                 <div class="mt-6 p-4 bg-indigo-50/50 rounded-xl border border-indigo-100/50">
                     <p class="text-xs text-gray-500 italic">
-                        "지도를 보며 도시의 이름을 맞추다 보면 어느새 대한민국 지리가 머릿속에 그려집니다. 
+                        "지도를 보며 도시의 이름을 맞추다 보면 어느새 대한민국 지리가 머릿속에 그려집니다.
                         서울, 부산, 대구와 같은 광역시부터 구석구석 숨어있는 군 단위까지 모두 정복해보세요!"
                     </p>
                 </div>
@@ -216,7 +227,7 @@
                 Presented by SHOP ELENA
             </a>
         </div>
-        
+
         <div class="glass-card p-8 mb-8 border-none bg-white/30 backdrop-blur-sm">
             <h3 class="text-lg font-bold text-gray-800 mb-6">사용자 의견</h3>
             <div id="disqus_thread"></div>
@@ -246,5 +257,10 @@
         })();
     </script>
     <script src="main.js"></script>
+    <!-- ② main.js 로드 후 이벤트 연결 — 함수를 확실히 찾을 수 있음 -->
+    <script>
+        document.getElementById('daily-btn')
+            .addEventListener('click', function() { startDailyChallenge(); });
+    </script>
 </body>
 </html>
