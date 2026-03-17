@@ -26,8 +26,10 @@ let questionTimeLimit = 10;
 let gameStartTime = null, gameElapsedSec = 0, answerLog = [];
 const LS_BEST  = 'kcityquiz_seoul_en_best';
 const LS_STATS = 'kcityquiz_seoul_en_stats';
+const LS_DAILY = 'kcityquiz_seoul_en_daily';
+let isDailyMode = false;
 
-// --- Seoul District Data (Korean | English name | English hint) ---
+// --- Seoul District Data ---
 const locations = [
     { name: "종로구 Jongno-gu",     lat: 37.5730, lng: 126.9794, zoom: 11, geoName: "종로구",   hint: "The historic heart of Seoul, home to Gyeongbokgung Palace, Cheong Wa Dae, and Gwanghwamun Square." },
     { name: "중구 Jung-gu",          lat: 37.5641, lng: 126.9979, zoom: 11, geoName: "중구",     hint: "Home to Namsan Tower, Myeongdong shopping street, and Dongdaemun Design Plaza (DDP)." },
@@ -61,6 +63,55 @@ let correctAnswerName = '', numOptions = 4;
 const MAX_QUESTIONS_PER_GAME = 10;
 const PROVINCE_VIEW_ZOOM = 10;
 const CITY_VIEW_DELAY = 1000;
+
+// =============================================
+// Daily Challenge
+// =============================================
+function getTodayKey() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function getDailyLocations() {
+    const seed = parseInt(getTodayKey().replace(/-/g, ''), 10) + 100; // Seoul offset
+    const arr = [...locations];
+    let s = seed;
+    function rand() {
+        s |= 0; s = s + 0x6D2B79F5 | 0;
+        let t = Math.imul(s ^ s >>> 15, 1 | s);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(rand() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr.slice(0, MAX_QUESTIONS_PER_GAME);
+}
+
+function getDailyStatus() {
+    const saved = JSON.parse(localStorage.getItem(LS_DAILY) || 'null');
+    return (saved && saved.date === getTodayKey()) ? saved : null;
+}
+
+function saveDailyResult(score, elapsed) {
+    localStorage.setItem(LS_DAILY, JSON.stringify({ date: getTodayKey(), score, elapsed }));
+}
+
+function startDailyChallenge() {
+    const status = getDailyStatus();
+    if (status) {
+        alert(`You've already completed today's Seoul challenge! 🎉\nScore: ${status.score} / ${MAX_QUESTIONS_PER_GAME}\nTry again tomorrow!`);
+        return;
+    }
+    isDailyMode = true;
+    isKidsMode = false;
+    numOptions = 8; 
+    questionTimeLimit = 15;
+    difficultySelector.style.display = 'none';
+    quizContainer.style.display = 'block';
+    startGame(true);
+}
 
 function getColorForRegion(name) {
     let hash = 0;
@@ -207,14 +258,16 @@ function showDifficultyScreen() {
     optionsArea.innerHTML = '';
     nextQuestionBtn.style.display = 'none';
     hintBtn.style.display = 'none';
+    isDailyMode = false;
 }
 
-async function startGame() {
+async function startGame(daily = false) {
+    isDailyMode = daily;
     score = 0; currentQuestionIndex = 0; totalHintsUsed = 0;
     currentQuestionHintUsed = false;
     hintsRemainingElement.textContent = 0;
     gameStartTime = Date.now(); gameElapsedSec = 0; answerLog = [];
-    shuffledGameLocations = shuffleArray([...locations]).slice(0, MAX_QUESTIONS_PER_GAME);
+    shuffledGameLocations = daily ? getDailyLocations() : shuffleArray([...locations]).slice(0, MAX_QUESTIONS_PER_GAME);
     totalQuestionsElement.textContent = shuffledGameLocations.length;
     progressArea.style.display = 'block';
     if (!map) { await initMap(); }
@@ -251,7 +304,6 @@ function loadQuestion() {
         const btn = document.createElement('button');
         btn.dataset.key = optName;
         btn.className = "option-button w-full bg-white hover:bg-blue-100 text-blue-700 py-1 px-2 border border-blue-300 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 flex flex-col items-center justify-center leading-tight";
-        // 한글/영어 두 줄
         const spaceIdx = optName.indexOf(' ');
         if (spaceIdx !== -1) {
             const korean = optName.substring(0, spaceIdx);
@@ -353,14 +405,21 @@ function endGame() {
     if (isNewBest) localStorage.setItem(LS_BEST, JSON.stringify({ score: roundedScore, elapsed: gameElapsedSec, date: new Date().toLocaleDateString('en-US') }));
     const bestData = JSON.parse(localStorage.getItem(LS_BEST));
 
+    if (isDailyMode) saveDailyResult(roundedScore, gameElapsedSec);
+
     questionTextElement.textContent = `Game Over! Final Score: ${roundedScore} / ${total}`;
     progressArea.style.display = 'none';
     hintBtn.style.display = 'none';
     nextQuestionBtn.style.display = 'none';
     restartBtn.textContent = 'Restart';
 
+    const dailyBanner = isDailyMode
+        ? `<div class="flex items-center justify-center gap-2 bg-blue-600 text-white rounded-xl px-4 py-2 text-sm font-bold mb-4">📅 Daily Seoul Challenge Complete! ${getTodayKey()}</div>`
+        : '';
+
     optionsArea.innerHTML = `
       <div class="col-span-4 space-y-4">
+        ${dailyBanner}
         <div class="grid grid-cols-3 gap-2 text-center">
           <div class="bg-blue-50 rounded-xl p-3 border border-blue-100">
             <p class="text-xs text-blue-400 font-semibold mb-1">Score</p>
@@ -439,7 +498,7 @@ function renderWeakStats() {
 }
 
 function maskHint(hint, locationName) {
-    const baseName = locationName.replace(/(특별시|광역시|특별자치시|특별자치도|시|군|구|동|읍|면)$/, '');
+    const baseName = locationName.replace(/(구)$/, '');
     const mask = '〇'.repeat(baseName.length);
     const escaped = locationName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const baseEscaped = baseName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -468,6 +527,7 @@ level1Btn.addEventListener('click', () => selectDifficulty(1));
 level2Btn.addEventListener('click', () => selectDifficulty(2));
 restartBtn.addEventListener('click', showDifficultyScreen);
 hintBtn.addEventListener('click', useHint);
+document.getElementById('daily-btn')?.addEventListener('click', startDailyChallenge);
 
 const toggleGuideBtn = document.getElementById('toggle-guide-btn');
 const detailedGuide = document.getElementById('detailed-guide');
@@ -483,6 +543,6 @@ nextQuestionBtn.addEventListener('click', () => {
     stopQuestionTimer();
     if (autoNextTimer) clearTimeout(autoNextTimer);
     if (countdownInterval) clearInterval(countdownInterval);
-    if (currentQuestionIndex < shuffledGameLocations.length - 1) { currentQuestionIndex++; loadQuestion(); }
+    if (currentQuestionIndex < shuffledGameLocations.length - 1) moveToNextQuestion();
     else endGame();
 });
