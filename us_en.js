@@ -206,10 +206,12 @@ function loadQuestion(){
     highlightState(loc.geoName);
     const latLng=[loc.lat,loc.lng];
     if(marker)marker.setLatLng(latLng).addTo(map);else marker=L.marker(latLng).addTo(map);
-    if(loc.geoName==='Alaska')map.setView([64,-153],4);
-    else if(loc.geoName==='Hawaii')map.setView([20,-157],6);
-    else map.setView([38.5,-96],4);
-    setTimeout(()=>{if(map)map.flyTo(latLng,loc.zoom,{duration:1});},CITY_VIEW_DELAY);
+    
+    // Always start with a full US view (zoom 4)
+    map.setView([38.5,-96],4);
+
+    // Zoom in by exactly 1 level (fixed to zoom level 5) regardless of state size
+    setTimeout(()=>{if(map)map.flyTo(latLng,5,{duration:1.5});},CITY_VIEW_DELAY);
     optionsArea.innerHTML='';
     generateOptions(correctAnswerName).forEach(optName=>{
         const btn=document.createElement('button');
