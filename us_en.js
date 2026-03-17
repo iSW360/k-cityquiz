@@ -91,7 +91,7 @@ function getDailyLocations() {
     const seed = parseInt(getTodayKey().replace(/-/g,''), 10);
     const arr = [...locations]; let s = seed;
     function rand() { s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296; }
-    for(let i=arr.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
+    for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}
     return arr.slice(0, MAX_QUESTIONS_PER_GAME);
 }
 function getDailyStatus() { const s=JSON.parse(localStorage.getItem(LS_DAILY)||'null'); return(s&&s.date===getTodayKey())?s:null; }
@@ -141,21 +141,21 @@ function handleTimeOut() {
 }
 
 async function initMap() {
-    mapErrorInfo.textContent='Loading map data...';
+    if(mapErrorInfo) mapErrorInfo.textContent='Loading map data...';
     if(map)map.remove();
     map=L.map('map').setView([38.5,-96],4);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png',{attribution:'&copy; OpenStreetMap &copy; CARTO',subdomains:'abcd',maxZoom:19}).addTo(map);
     try {
         const res=await fetch('https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json');
-        if(!res.ok)throw new Error(`HTTP ${res.status}`);
+        if(!res.ok) throw new Error(`HTTP ${res.status}`);
         const data=await res.json();
         if(geoJsonLayer&&map.hasLayer(geoJsonLayer))geoJsonLayer.remove();
         geoJsonLayer=L.geoJSON(data,{
             style:f=>{const n=f.properties.name||'';const hue=(n.charCodeAt(0)*7+(n.charCodeAt(1)||0)*13)%360;return{color:`hsl(${hue},55%,48%)`,weight:1.5,opacity:0.8,fillOpacity:0.25,fillColor:`hsl(${hue},55%,58%)`};},
             onEachFeature:(f,layer)=>{layer.on({mouseover:e=>{e.target.setStyle({weight:3,fillOpacity:0.45});if(!L.Browser.ie&&!L.Browser.opera&&!L.Browser.edge)e.target.bringToFront();},mouseout:e=>geoJsonLayer&&geoJsonLayer.resetStyle(e.target)});}
         }).addTo(map);
-        mapErrorInfo.textContent='';
-    } catch(e){mapErrorInfo.textContent='Failed to load state boundaries.';}
+        if(mapErrorInfo) mapErrorInfo.textContent='';
+    } catch(e){if(mapErrorInfo) mapErrorInfo.textContent='Failed to load state boundaries.';}
     marker=L.marker([0,0],{icon:L.icon({iconUrl:'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',iconSize:[25,41],iconAnchor:[12,41],shadowUrl:'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',shadowSize:[41,41]})});
 }
 
@@ -187,7 +187,7 @@ async function startGame(daily=false){
     shuffledGameLocations=daily?getDailyLocations():shuffleArray([...locations]).slice(0,MAX_QUESTIONS_PER_GAME);
     totalQuestionsElement.textContent=shuffledGameLocations.length;progressArea.style.display='block';
     questionTextElement.textContent='Loading map...';restartBtn.disabled=true;
-    if(!map){try{await initMap();}catch(e){mapErrorInfo.textContent='Map init failed.';restartBtn.disabled=false;return;}}
+    if(!map){try{await initMap();}catch(e){if(mapErrorInfo) mapErrorInfo.textContent='Map init failed.';restartBtn.disabled=false;return;}}
     else{if(marker&&map.hasLayer(marker))marker.remove();if(geoJsonLayer)geoJsonLayer.eachLayer(l=>geoJsonLayer.resetStyle(l));}
     restartBtn.disabled=false;restartBtn.textContent='Restart';
     nextQuestionBtn.style.display='none';hintBtn.style.display='inline-flex';hintBtn.disabled=false;
@@ -346,5 +346,4 @@ const toggleGuideBtn=document.getElementById('toggle-guide-btn');
 const detailedGuide=document.getElementById('detailed-guide');
 if(toggleGuideBtn&&detailedGuide){toggleGuideBtn.addEventListener('click',()=>{const h=detailedGuide.classList.contains('hidden');detailedGuide.classList.toggle('hidden',!h);toggleGuideBtn.textContent=h?'Close Guide':'Open Detailed Game Guide';});}
 nextQuestionBtn.addEventListener('click',()=>{stopQuestionTimer();if(autoNextTimer)clearTimeout(autoNextTimer);if(countdownInterval)clearInterval(countdownInterval);if(currentQuestionIndex<shuffledGameLocations.length-1)moveToNextQuestion();else endGame();});
-
-document.getElementById('daily-btn')?.addEventListener('click', startDailyChallenge);Timeout(autoNextTimer);if(countdownInterval)clearInterval(countdownInterval);if(currentQuestionIndex<shuffledGameLocations.length-1){currentQuestionIndex++;loadQuestion();}else endGame();});
+document.getElementById('daily-btn')?.addEventListener('click', startDailyChallenge);
