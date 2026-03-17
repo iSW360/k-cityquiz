@@ -5,224 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seoul District Quiz | Geography Master</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-     crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-     crossorigin=""></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9931225061186683"
-     crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="style.css">
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-65PZDWN73K"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-65PZDWN73K');
-    </script>
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){
-            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        })(window, document, "clarity", "script", "vqh5drw2xf");
-    </script>
-    <meta name="description" content="Seoul District Quiz - Learn the locations of all 25 autonomous districts (gu) of Seoul in a fun way!">
-    <meta name="keywords" content="Seoul district quiz, Seoul geography, Seoul gu map, Korea map game, educational game, Seoul 25 districts">
-    <link rel="canonical" href="https://isw360.github.io/k-cityquiz/seoul_en.html">
-
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://isw360.github.io/k-cityquiz/seoul_en.html">
-    <meta property="og:title" content="Seoul District Quiz - Master Seoul Geography">
-    <meta property="og:description" content="How well do you know Seoul's 25 districts? Test yourself with this fun map quiz!">
-    <meta property="og:image" content="https://isw360.github.io/k-cityquiz/korea_seoul_map.png">
-
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://isw360.github.io/k-cityquiz/seoul_en.html">
-    <meta property="twitter:title" content="Seoul District Quiz - Master Seoul Geography">
-    <meta property="twitter:description" content="How well do you know Seoul's 25 districts? Test yourself with this fun map quiz!">
-    <meta property="twitter:image" content="https://isw360.github.io/k-cityquiz/korea_seoul_map.png">
-
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏙️</text></svg>">
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "Seoul District Quiz",
-      "operatingSystem": "Web",
-      "applicationCategory": "GameApplication",
-      "genre": "Educational, Quiz",
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-      "description": "An educational quiz game to learn the locations of Seoul's 25 autonomous districts on a map.",
-      "author": { "@type": "Organization", "name": "SHOP ELENA" }
-    }
-    </script>
 </head>
-
 <body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 selection:bg-indigo-200">
-
-    <!-- Main Dashboard -->
     <div id="difficulty-selector" class="glass-card p-6 sm:p-10 w-full max-w-lg text-center relative overflow-hidden z-10">
-        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
-
-        <!-- 언어 전환 버튼 -->
-        <div class="absolute top-4 right-4">
-            <a href="seoul.html" class="text-xs font-bold text-blue-400 hover:text-blue-600 border border-blue-200 px-2 py-1 rounded-full transition-all">🇰🇷 한국어</a>
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+        <h1 class="text-3xl font-extrabold mb-2 tracking-tight text-gradient">Seoul District Quiz</h1>
+        <p class="text-gray-500 font-medium mb-8">Test your knowledge of Seoul's 25 districts!</p>
+        <div class="grid grid-cols-2 gap-4 mt-4">
+            <button id="level-1-btn" class="bg-white text-blue-600 border-2 border-blue-100 font-bold py-2 px-4 rounded-2xl shadow-sm">Level 1</button>
+            <button id="level-2-btn" class="btn-modern bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-2 px-4 rounded-2xl shadow-lg">Level 2</button>
         </div>
-
-        <h1 class="text-3xl sm:text-4xl font-extrabold mb-2 tracking-tight">
-            <span class="text-gradient">Seoul District Quiz</span>
-        </h1>
-        <p class="text-gray-500 font-medium mb-8">Do you know all 25 districts of Seoul?</p>
-
-        <!-- Hero Image -->
-        <div class="flex justify-center my-10 relative">
-            <div class="relative">
-                <div class="ripple-circle" style="top: 40%; left: 50%;"></div>
-                <div class="ripple-circle" style="top: 40%; left: 50%; animation-delay: 1s;"></div>
-
-                <img src="korea_seoul_map.png" alt="Map of Seoul" class="w-48 sm:w-56 h-auto drop-shadow-2xl">
-
-                <!-- Pin Icon -->
-                <div class="absolute top-[40%] left-[50%] -translate-x-1/2 -translate-y-1/2">
-                    <div class="bg-blue-500 p-2 rounded-full shadow-lg border-2 border-white animate-bounce">
-                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4 mt-8">
-            <button id="level-1-btn" class="btn-modern bg-white text-blue-600 border-2 border-blue-100 font-bold py-2 px-4 rounded-2xl shadow-sm">
-                <span class="block text-xl">Level 1</span>
-                <span class="text-xs font-medium text-gray-400">4 choices</span>
-            </button>
-            <button id="level-2-btn" class="btn-modern bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-2 px-4 rounded-2xl shadow-lg">
-                <span class="block text-xl">Level 2</span>
-                <span class="text-xs font-medium text-blue-100">8 choices</span>
-            </button>
-        </div>
-
-        <div class="mt-8 pt-6 border-t border-gray-100/50">
-            <a href="index_en.html" class="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-indigo-600 transition-all group">
-                <svg class="w-4 h-4 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 8.959 8.959 0 01-9 9 8.959 8.959 0 01-9-9z"></path></svg>
-                Back to Korea City Quiz
-            </a>
+        <div class="mt-6 pt-6 border-t border-gray-100 flex justify-center">
+            <a href="index_en.html" class="text-xs font-semibold text-gray-400 hover:text-gray-600">🏠 Back to Home</a>
         </div>
     </div>
 
-    <!-- Quiz Game Interface -->
     <div id="quiz-container" class="glass-card p-4 sm:p-8 w-full max-w-4xl z-10" style="display: none;">
-        <header class="mb-4 sm:mb-6 flex justify-between items-center">
-            <h2 class="text-lg sm:text-xl font-bold text-gradient">Seoul District Quiz</h2>
-            <div id="progress-area" class="bg-blue-50 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full border border-blue-100">
-                <span class="text-xs sm:text-sm font-bold text-blue-600"><span id="current-question">0</span> / <span id="total-questions">0</span></span>
+        <header class="mb-6 flex justify-between items-center">
+            <h2 class="text-xl font-bold text-gradient">Seoul Quiz In Progress</h2>
+            <div id="progress-area" class="bg-blue-50 px-4 py-1.5 rounded-full border border-blue-100">
+                <span class="text-sm font-bold text-blue-600"><span id="current-question">0</span> / <span id="total-questions">0</span></span>
             </div>
         </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
-            <!-- Left: Map -->
-            <div class="lg:col-span-7">
-                <div id="map"></div>
-            </div>
-
-            <!-- Right: Controls -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-7"><div id="map"></div></div>
             <div class="lg:col-span-5 flex flex-col justify-between">
-                <div id="question-area" class="text-center mb-4 sm:mb-6 bg-white/50 p-3 sm:p-4 rounded-2xl border border-white/50">
-                    <p id="question-text" class="text-base sm:text-xl font-bold text-gray-800 leading-tight mb-2">Which district is highlighted in red?</p>
-                    <button id="hint-btn" class="mx-auto text-[10px] sm:text-xs bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full transition-all flex items-center gap-1.5 shadow-sm" style="display: none;">
-                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.477.859h4z"></path></svg>
-                        Hint <span class="opacity-60">(-0.5pt)</span> | Used: <span id="hints-remaining" class="font-bold">0</span>
-                    </button>
+                <div id="question-area" class="text-center mb-6 bg-white/50 p-4 rounded-2xl">
+                    <p id="question-text" class="text-xl font-bold text-gray-800 mb-2">Where is this district?</p>
+                    <button id="hint-btn" class="mx-auto text-xs bg-amber-50 text-amber-700 border border-amber-200 px-4 py-1.5 rounded-full">💡 Hint</button>
                 </div>
-
-                <div id="options-area" class="grid grid-cols-4 gap-2 sm:gap-3 mb-6"></div>
-
-                <div id="feedback-area" class="text-center min-h-[3rem] mb-6 px-4 py-2 rounded-xl transition-colors">
-                    <p id="feedback-text" class="text-base font-bold"></p>
-                </div>
-
+                <div id="options-area" class="grid grid-cols-2 gap-2 mb-6"></div>
+                <div id="feedback-area" class="text-center min-h-[2rem] mb-4"><p id="feedback-text" class="text-base font-bold"></p></div>
                 <div class="flex gap-3">
-                    <button id="restart-btn" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-3 px-4 rounded-xl transition-all">
-                        Restart
-                    </button>
-                    <button id="next-question-btn" class="flex-[2] bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-blue-200 transition-all" style="display: none;">
-                        Next
-                    </button>
+                    <button id="restart-btn" class="flex-1 bg-gray-100 py-3 rounded-xl font-bold">Restart</button>
+                    <button id="next-question-btn" class="flex-[2] bg-blue-600 text-white py-3 rounded-xl shadow-lg" style="display: none;">Next</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Guide Section -->
-    <section class="max-w-4xl w-full mt-10 z-10">
-        <div class="glass-card p-6 border-none shadow-none">
-            <div id="guide-summary" class="text-center">
-                <p class="text-gray-500 text-sm mb-4">Master all 25 autonomous districts of Seoul!</p>
-                <button id="toggle-guide-btn" class="text-blue-600 font-bold text-sm hover:underline decoration-2 underline-offset-4">Open Detailed Game Guide</button>
-            </div>
-
-            <article id="detailed-guide" class="hidden mt-8 pt-8 border-t border-gray-100/50">
-                <h3 class="text-xl font-bold text-gray-800 mb-4">About Seoul District Quiz</h3>
-                <div class="grid sm:grid-cols-2 gap-6 text-gray-600 text-sm leading-relaxed">
-                    <div>
-                        <p class="mb-3 font-semibold text-blue-600">✓ Conquer All 25 Districts</p>
-                        <p>Learn the location and name of every autonomous district (gu) in Seoul quickly and easily through this quiz. From Gangnam and Seocho in the south to Dobong and Nowon in the north.</p>
-                    </div>
-                    <div>
-                        <p class="mb-3 font-semibold text-blue-600">✓ Practical Knowledge</p>
-                        <p>After each answer, discover key facts and geographic information about each district. Build the Seoul geography knowledge you need for daily life, travel, and beyond.</p>
-                    </div>
-                </div>
-                <div class="mt-6 p-4 bg-blue-50/50 rounded-xl border border-blue-100/50">
-                    <p class="text-xs text-gray-500 italic">
-                        "Where exactly is the place you live or work in Seoul?
-                        Play through this quiz and you'll become a Seoul geography master before you know it!"
-                    </p>
-                </div>
-            </article>
-        </div>
-    </section>
-
-    <!-- Footer -->
     <footer class="mt-16 pb-10 text-center w-full max-w-4xl z-10">
-        <div class="mb-8">
-            <a href="https://smartstore.naver.com/shopelena" target="_blank" class="text-lg font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400 hover:scale-110 transition-transform inline-block">
-                Presented by SHOP ELENA
-            </a>
+        <div class="flex flex-wrap justify-center gap-3 mb-8">
+            <a href="https://tally.so/r/n0PvWl" target="_blank" class="text-[11px] font-bold text-gray-500 bg-white/50 border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-white transition-all shadow-sm">💬 Leave Feedback</a>
+            <a href="mailto:isw360@gmail.com?subject=[Business Inquiry] Seoul District Quiz" class="text-[11px] font-bold text-gray-500 bg-white/50 border border-gray-200 px-3 py-1.5 rounded-lg hover:bg-white transition-all shadow-sm">💼 Business Inquiry</a>
         </div>
-
-        <div class="glass-card p-8 mb-8 border-none bg-white/30 backdrop-blur-sm">
-            <h3 class="text-lg font-bold text-gray-800 mb-6">User Comments</h3>
-            <div id="disqus_thread"></div>
-        </div>
-
-        <div class="text-[10px] text-gray-400 space-y-2 uppercase tracking-tighter">
-            <p>&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" class="hover:text-blue-500 transition-colors">OpenStreetMap</a> & <a href="https://carto.com/attributions" target="_blank" class="hover:text-blue-500 transition-colors">CARTO</a> Contributors</p>
-            <div class="pt-4 flex justify-center gap-4 font-bold text-gray-500">
-                <a href="privacy.html" class="hover:text-indigo-600">Privacy Policy</a>
-                <a href="mailto:contact@example.com" class="hover:text-indigo-600">Contact Us</a>
-            </div>
-            <p id="map-error-info" class="text-rose-500 mt-2 lowercase font-normal h-4"></p>
-        </div>
+        <p class="text-[10px] text-gray-400">&copy; OpenStreetMap & CARTO</p>
     </footer>
-
-    <script>
-        var disqus_config = function () {
-            this.page.url = window.location.href;
-            this.page.identifier = 'k-cityquiz-seoul-en';
-        };
-        (function() {
-            var d = document, s = d.createElement('script');
-            s.src = 'https://k-cityquiz.disqus.com/embed.js';
-            s.setAttribute('data-timestamp', +new Date());
-            (d.head || d.body).appendChild(s);
-        })();
-    </script>
     <script src="seoul_en.js"></script>
 </body>
 </html>

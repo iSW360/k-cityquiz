@@ -299,10 +299,11 @@ function loadQuestion() {
     optionsArea.innerHTML='';
     generateOptions(correctAnswerName).forEach(optName => {
         const btn=document.createElement('button');
-        btn.className='option-button w-full bg-white hover:bg-red-50 text-red-700 font-semibold py-2 px-3 border border-red-200 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-400';
-        // 한글 + 영어 두 줄
+        // flex-col을 통해 자식 span들을 세로로 배치하고, padding을 조정하여 텍스트가 칸 안에 들어가도록 합니다.
+        btn.className='option-button w-full flex flex-col items-center justify-center bg-white hover:bg-red-50 text-red-700 font-semibold border border-red-200 rounded-lg shadow-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-400 py-1 px-0.5';
         const loc2=locations.find(l=>l.name===optName);
-        btn.innerHTML=`<span class="block text-xs sm:text-sm font-bold">${optName}</span><span class="block text-[10px] sm:text-xs text-red-400">${loc2?loc2.en:''}</span>`;
+        // <br> 태그와 block span을 조합하여 확실한 줄바꿈을 구현합니다.
+        btn.innerHTML=`<span class="block w-full text-[11px] sm:text-sm font-bold leading-none">${optName}</span><br><span class="block w-full text-[8px] sm:text-[10px] text-red-400 mt-[-4px] leading-none uppercase truncate">${loc2?loc2.en:''}</span>`;
         btn.onclick=()=>handleAnswer(optName,btn);
         optionsArea.appendChild(btn);
     });
@@ -476,3 +477,5 @@ nextQuestionBtn.addEventListener('click',()=>{
     if(countdownInterval)clearInterval(countdownInterval);
     if(currentQuestionIndex<shuffledGameLocations.length-1)moveToNextQuestion();else endGame();
 });
+
+document.getElementById('daily-btn')?.addEventListener('click', startDailyChallenge);

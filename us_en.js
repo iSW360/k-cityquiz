@@ -345,4 +345,6 @@ hintBtn.addEventListener('click',useHint);
 const toggleGuideBtn=document.getElementById('toggle-guide-btn');
 const detailedGuide=document.getElementById('detailed-guide');
 if(toggleGuideBtn&&detailedGuide){toggleGuideBtn.addEventListener('click',()=>{const h=detailedGuide.classList.contains('hidden');detailedGuide.classList.toggle('hidden',!h);toggleGuideBtn.textContent=h?'Close Guide':'Open Detailed Game Guide';});}
-nextQuestionBtn.addEventListener('click',()=>{stopQuestionTimer();if(autoNextTimer)clearTimeout(autoNextTimer);if(countdownInterval)clearInterval(countdownInterval);if(currentQuestionIndex<shuffledGameLocations.length-1){currentQuestionIndex++;loadQuestion();}else endGame();});
+nextQuestionBtn.addEventListener('click',()=>{stopQuestionTimer();if(autoNextTimer)clearTimeout(autoNextTimer);if(countdownInterval)clearInterval(countdownInterval);if(currentQuestionIndex<shuffledGameLocations.length-1)moveToNextQuestion();else endGame();});
+
+document.getElementById('daily-btn')?.addEventListener('click', startDailyChallenge);Timeout(autoNextTimer);if(countdownInterval)clearInterval(countdownInterval);if(currentQuestionIndex<shuffledGameLocations.length-1){currentQuestionIndex++;loadQuestion();}else endGame();});

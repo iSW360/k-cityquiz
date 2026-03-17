@@ -803,3 +803,5 @@ nextQuestionBtn.addEventListener('click', () => {
     if (currentQuestionIndex < shuffledGameLocations.length-1) moveToNextQuestion();
     else endGame();
 });
+
+document.getElementById('daily-btn')?.addEventListener('click', startDailyChallenge);
