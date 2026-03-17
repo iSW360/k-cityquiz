@@ -34,6 +34,8 @@ let gameElapsedSec = 0;
 let answerLog = [];
 const LS_BEST  = 'kcityquiz_en_best';
 const LS_STATS = 'kcityquiz_en_stats';
+const LS_DAILY = 'kcityquiz_en_daily';
+let isDailyMode = false;
 
 // --- Location Data (Korean name | English name | English hint) ---
 const locations = [
@@ -217,6 +219,53 @@ const MAX_QUESTIONS_PER_GAME = 10;
 const PROVINCE_VIEW_ZOOM = 6;
 const CITY_VIEW_DELAY = 1500;
 
+// =============================================
+// Daily Challenge
+// =============================================
+function getTodayKey() {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function getDailyLocations() {
+    const seed = parseInt(getTodayKey().replace(/-/g, ''), 10);
+    const arr = [...locations];
+    let s = seed;
+    function rand() {
+        s |= 0; s = s + 0x6D2B79F5 | 0;
+        let t = Math.imul(s ^ s >>> 15, 1 | s);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(rand() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr.slice(0, MAX_QUESTIONS_PER_GAME);
+}
+
+function getDailyStatus() {
+    const saved = JSON.parse(localStorage.getItem(LS_DAILY) || 'null');
+    return (saved && saved.date === getTodayKey()) ? saved : null;
+}
+
+function saveDailyResult(score, elapsed) {
+    localStorage.setItem(LS_DAILY, JSON.stringify({ date: getTodayKey(), score, elapsed }));
+}
+
+function startDailyChallenge() {
+    const status = getDailyStatus();
+    if (status) {
+        alert(`You've already completed today's challenge! 🎉\nScore: ${status.score} / ${MAX_QUESTIONS_PER_GAME}\nTry again tomorrow!`);
+        return;
+    }
+    isDailyMode = true;
+    numOptions = 8; // Daily challenge is always Hard mode
+    difficultySelector.style.display = 'none';
+    quizContainer.style.display = 'block';
+    startGame(true);
+}
+
 const provinceHueMap = {
     '서울': 210, '부산': 10, '대구': 30, '인천': 270,
     '광주': 160, '대전': 340, '울산': 20, '세종': 200,
@@ -393,14 +442,16 @@ function showDifficultyScreen() {
     optionsArea.innerHTML = '';
     nextQuestionBtn.style.display = 'none';
     hintBtn.style.display = 'none';
+    isDailyMode = false;
 }
 
-async function startGame() {
+async function startGame(daily = false) {
+    isDailyMode = daily;
     score = 0; currentQuestionIndex = 0; totalHintsUsed = 0;
     currentQuestionHintUsed = false;
     hintsRemainingElement.textContent = 0;
     gameStartTime = Date.now(); gameElapsedSec = 0; answerLog = [];
-    shuffledGameLocations = shuffleArray([...locations]).slice(0, MAX_QUESTIONS_PER_GAME);
+    shuffledGameLocations = daily ? getDailyLocations() : shuffleArray([...locations]).slice(0, MAX_QUESTIONS_PER_GAME);
     totalQuestionsElement.textContent = shuffledGameLocations.length;
     progressArea.style.display = 'block';
     questionTextElement.textContent = "Loading map... please wait.";
@@ -551,14 +602,21 @@ function endGame() {
     if (isNewBest) localStorage.setItem(LS_BEST, JSON.stringify({ score: roundedScore, elapsed: gameElapsedSec, date: new Date().toLocaleDateString('en-US') }));
     const bestData = JSON.parse(localStorage.getItem(LS_BEST));
 
+    if (isDailyMode) saveDailyResult(roundedScore, gameElapsedSec);
+
     questionTextElement.textContent = `Game Over! Final Score: ${roundedScore} / ${total}`;
     progressArea.style.display = 'none';
     hintBtn.style.display = 'none';
     nextQuestionBtn.style.display = 'none';
     restartBtn.textContent = 'Restart';
 
+    const dailyBanner = isDailyMode
+        ? `<div class="flex items-center justify-center gap-2 bg-indigo-600 text-white rounded-xl px-4 py-2 text-sm font-bold mb-4">📅 Daily Challenge Complete! ${getTodayKey()}</div>`
+        : '';
+
     optionsArea.innerHTML = `
       <div class="col-span-4 space-y-4">
+        ${dailyBanner}
         <div class="grid grid-cols-3 gap-2 text-center">
           <div class="bg-indigo-50 rounded-xl p-3 border border-indigo-100">
             <p class="text-xs text-indigo-400 font-semibold mb-1">Score</p>
@@ -666,6 +724,7 @@ level1Btn.addEventListener('click', () => selectDifficulty(1));
 level2Btn.addEventListener('click', () => selectDifficulty(2));
 restartBtn.addEventListener('click', showDifficultyScreen);
 hintBtn.addEventListener('click', useHint);
+document.getElementById('daily-btn')?.addEventListener('click', startDailyChallenge);
 
 const toggleGuideBtn = document.getElementById('toggle-guide-btn');
 const detailedGuide = document.getElementById('detailed-guide');
