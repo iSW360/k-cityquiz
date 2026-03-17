@@ -292,8 +292,8 @@ function loadQuestion() {
     // 무조건 미국 본토 중심으로 초기 뷰 설정 (미국 전체가 보이도록)
     map.setView([38.5, -96], 4);
 
-    // 1.5초 후 해당 주로 이동하며 딱 1단계만 줌인 (줌 레벨 5 고정)
-    setTimeout(()=>{ if(map) map.flyTo(latLng, 5, {duration:1.5}); }, CITY_VIEW_DELAY);
+    // 1.5초 후 해당 주로 이동하며 줌 레벨 4 유지 (통일)
+    setTimeout(()=>{ if(map) map.flyTo(latLng, 4, {duration:1.5}); }, CITY_VIEW_DELAY);
 
     optionsArea.innerHTML='';
     generateOptions(correctAnswerName).forEach(optName => {
