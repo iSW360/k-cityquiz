@@ -295,7 +295,7 @@ function loadQuestion() {
     const latLng = [loc.lat, loc.lng];
     if (marker) marker.setLatLng(latLng).addTo(map);
     map.setView([37.5665, 126.9780], PROVINCE_VIEW_ZOOM);
-    setTimeout(() => { if (map) map.flyTo(latLng, loc.zoom || 11, { duration: 1 }); }, CITY_VIEW_DELAY);
+    setTimeout(() => { if (map) map.flyTo(latLng, loc.zoom || 11, { duration: 1.5 }); }, CITY_VIEW_DELAY);
     optionsArea.innerHTML = '';
     generateOptions(correctAnswerName).forEach(optionName => {
         const button = document.createElement('button');

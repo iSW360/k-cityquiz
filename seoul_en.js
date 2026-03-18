@@ -130,9 +130,9 @@ function createTimerUI() {
     timerEl.className = 'flex items-center justify-center gap-2 mb-3';
     timerEl.innerHTML = `
         <div class="relative w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-            <div id="timer-bar" class="h-3 rounded-full transition-all duration-1000 ease-linear bg-blue-500" style="width:100%"></div>
+            <div id="timer-bar" class="h-3 rounded-full transition-all duration-1000 ease-linear bg-indigo-500" style="width:100%"></div>
         </div>
-        <span id="timer-text" class="text-sm font-bold text-blue-600 min-w-[2.5rem] text-right">${questionTimeLimit}s</span>
+        <span id="timer-text" class="text-sm font-bold text-indigo-600 min-w-[2.5rem] text-right">${questionTimeLimit}s</span>
     `;
     const questionArea = document.getElementById('question-area');
     questionArea.parentNode.insertBefore(timerEl, questionArea);
@@ -178,7 +178,7 @@ function handleTimeOut() {
     });
     feedbackTextElement.innerHTML = `<span class="text-orange-600 font-bold">⏰ Time's up! The answer was <strong>${correctAnswerName}</strong>.</span>`;
     const isLast = currentQuestionIndex >= shuffledGameLocations.length - 1;
-    const btnLabel = isLast ? 'Results' : 'Next';
+    const btnLabel = isLast ? 'Results' : 'Next Question';
     nextQuestionBtn.textContent = `${btnLabel} (3s)`;
     nextQuestionBtn.style.display = 'inline-block';
     hintBtn.style.display = 'none';
@@ -194,7 +194,7 @@ function handleTimeOut() {
 }
 
 async function initMap() {
-    if (mapErrorInfo) mapErrorInfo.textContent = 'Loading map...';
+    if (mapErrorInfo) mapErrorInfo.textContent = 'Loading map data...';
     if (map) map.remove();
     map = L.map('map', { zoomControl: false }).setView([37.5665, 126.9780], 10);
     L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -217,7 +217,7 @@ async function initMap() {
             }
         }).addTo(map);
         if (mapErrorInfo) mapErrorInfo.textContent = '';
-    } catch (e) { if (mapErrorInfo) mapErrorInfo.textContent = 'Failed to load district data.'; }
+    } catch (e) { if (mapErrorInfo) mapErrorInfo.textContent = 'Failed to load administrative data.'; }
     marker = L.marker([0, 0], { icon: L.icon({ iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png', iconSize: [25, 41], iconAnchor: [12, 41] }) });
 }
 
@@ -262,7 +262,7 @@ async function startGame(daily = false) {
     isDailyMode = daily;
     score = 0; currentQuestionIndex = 0; totalHintsUsed = 0;
     currentQuestionHintUsed = false;
-    hintsRemainingElement.textContent = 0;
+    if (hintsRemainingElement) hintsRemainingElement.textContent = 0;
     gameStartTime = Date.now(); gameElapsedSec = 0; answerLog = [];
     shuffledGameLocations = daily ? getDailyLocations() : shuffleArray([...locations]).slice(0, MAX_QUESTIONS_PER_GAME);
     totalQuestionsElement.textContent = shuffledGameLocations.length;
@@ -288,19 +288,20 @@ function loadQuestion() {
     correctAnswerName = loc.name;
     currentQuestionHintUsed = false;
     questionTimeLeft = questionTimeLimit;
-    questionTextElement.textContent = "Where is this district?";
+    questionTextElement.textContent = "Which district is this?";
     currentQuestionElement.textContent = currentQuestionIndex + 1;
     if (geoJsonLayer) geoJsonLayer.eachLayer(l => geoJsonLayer.resetStyle(l));
     highlightCurrentQuestionRegion(loc.geoName);
     const latLng = [loc.lat, loc.lng];
     if (marker) marker.setLatLng(latLng).addTo(map);
     map.setView([37.5665, 126.9780], PROVINCE_VIEW_ZOOM);
-    setTimeout(() => { if (map) map.flyTo(latLng, loc.zoom || 11, { duration: 1 }); }, CITY_VIEW_DELAY);
+    setTimeout(() => { if (map) map.flyTo(latLng, loc.zoom || 11, { duration: 1.5 }); }, CITY_VIEW_DELAY);
     optionsArea.innerHTML = '';
     generateOptions(correctAnswerName).forEach(optName => {
         const btn = document.createElement('button');
         btn.dataset.key = optName;
-        btn.className = "option-button w-full bg-white hover:bg-blue-100 text-blue-700 py-1 px-2 border border-blue-300 rounded-lg shadow-sm transition-all duration-200 focus:outline-none flex flex-col items-center justify-center leading-tight";
+        btn.className = "option-button w-full bg-white hover:bg-blue-100 text-blue-700 font-semibold border border-blue-300 rounded-lg shadow-sm transition-all duration-200 focus:outline-none";
+        
         const spaceIdx = optName.indexOf(' ');
         if (spaceIdx !== -1) {
             const korean = optName.substring(0, spaceIdx);
@@ -309,6 +310,7 @@ function loadQuestion() {
         } else {
             btn.innerHTML = `<span class="text-xs sm:text-sm font-bold">${optName}</span>`;
         }
+        
         btn.onclick = () => handleAnswer(optName, btn);
         optionsArea.appendChild(btn);
     });
@@ -347,7 +349,7 @@ function handleAnswer(selectedName, buttonElement) {
         feedbackTextElement.innerHTML = `<span class="text-green-600 font-bold">Correct! 👏 (+${gained}pt)${timeMsg}</span><br><span class="text-gray-600 text-xs sm:text-sm mt-1">📍 ${maskHint(loc.hint, correctAnswerName)}</span>`;
         buttonElement.classList.add('bg-green-500', 'text-white', 'border-green-700');
     } else {
-        feedbackTextElement.innerHTML = `<span class="text-red-600 font-bold">Wrong! The answer was <strong>${correctAnswerName}</strong>. 😥</span><br><span class="text-gray-600 text-xs sm:text-sm mt-1">📍 ${maskHint(loc.hint, correctAnswerName)}</span>`;
+        feedbackTextElement.innerHTML = `<span class="text-red-600 font-bold">Wrong. The answer was ${correctAnswerName}. 😥</span><br><span class="text-gray-600 text-xs sm:text-sm mt-1">📍 ${maskHint(loc.hint, correctAnswerName)}</span>`;
         buttonElement.classList.add('bg-red-500', 'text-white', 'border-red-700');
         Array.from(optionsArea.children).forEach(btn => {
             if (btn.dataset.key === correctAnswerName) {
@@ -358,7 +360,7 @@ function handleAnswer(selectedName, buttonElement) {
     }
     let countdown = 4;
     const isLast = currentQuestionIndex >= shuffledGameLocations.length - 1;
-    const btnLabel = isLast ? 'Results' : 'Next';
+    const btnLabel = isLast ? 'Results' : 'Next Question';
     nextQuestionBtn.textContent = `${btnLabel} (${countdown}s)`;
     nextQuestionBtn.style.display = 'inline-block';
     hintBtn.style.display = 'none';
@@ -373,7 +375,7 @@ function handleAnswer(selectedName, buttonElement) {
 }
 
 function useHint() {
-    if (!currentQuestionHintUsed) { totalHintsUsed++; currentQuestionHintUsed = true; hintsRemainingElement.textContent = totalHintsUsed; }
+    if (!currentQuestionHintUsed) { totalHintsUsed++; currentQuestionHintUsed = true; if (hintsRemainingElement) hintsRemainingElement.textContent = totalHintsUsed; }
     const loc = shuffledGameLocations[currentQuestionIndex];
     feedbackTextElement.textContent = `💡 Hint: ${maskHint(loc.hint, correctAnswerName)}`;
     feedbackTextElement.className = 'text-md font-medium text-amber-600';
@@ -409,7 +411,7 @@ function endGame() {
         ${dailyBanner}
         <div class="grid grid-cols-3 gap-2 text-center">
           <div class="bg-blue-50 rounded-xl p-3 border border-blue-100">
-            <p class="text-xs text-blue-400 font-semibold mb-1">Score</p>
+            <p class="text-xs text-blue-400 font-semibold mb-1">Final Score</p>
             <p class="text-2xl font-extrabold text-blue-600">${roundedScore}<span class="text-sm font-normal text-blue-400">/${total}</span></p>
           </div>
           <div class="bg-emerald-50 rounded-xl p-3 border border-emerald-100">
@@ -419,15 +421,15 @@ function endGame() {
           <div class="bg-amber-50 rounded-xl p-3 border border-amber-100">
             <p class="text-xs text-amber-400 font-semibold mb-1">Time</p>
             <p class="text-lg font-extrabold text-amber-600">${timeStr}</p>
-            <p class="text-xs text-amber-400">avg ${avgTime}s/Q</p>
+            <p class="text-xs text-amber-400">Avg ${avgTime}s/Q</p>
           </div>
         </div>
         <div class="flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl px-4 py-3 border border-blue-100">
-          <span class="text-sm font-bold text-blue-700">🏆 Best Score</span>
+          <span class="text-sm font-bold text-blue-700">🏆 All-time Best</span>
           <span class="text-sm font-bold text-blue-600">${bestData ? `${bestData.score}pts · ${bestData.date}` : '-'}${isNewBest ? '<span class="ml-2 bg-yellow-400 text-white text-xs px-2 py-0.5 rounded-full">NEW!</span>' : ''}</span>
         </div>
         <div>
-          <p class="text-sm font-bold text-gray-600 mb-2">📊 This Game Results</p>
+          <p class="text-sm font-bold text-gray-600 mb-2">📊 Game Results</p>
           <div class="space-y-1 max-h-48 overflow-y-auto pr-1">
             ${answerLog.map(l => `<div class="flex items-center justify-between text-xs px-3 py-1.5 rounded-lg ${l.correct ? 'bg-green-50 border border-green-100' : 'bg-red-50 border border-red-100'}"><span class="${l.correct ? 'text-green-700' : 'text-red-700'} font-semibold">${l.correct ? '✅' : '❌'} ${l.name}</span><span class="text-gray-400">${l.timeTaken}s</span></div>`).join('')}
           </div>
@@ -459,18 +461,29 @@ function renderWeakStats() {
     const entries = Object.entries(stats).filter(([, v]) => v.wrong > 0).sort((a, b) => b[1].wrong - a[1].wrong).slice(0, 5);
     if (entries.length === 0) return '';
     const bars = entries.map(([name, v]) => {
-        const total = v.correct + v.wrong, pct = Math.round((v.wrong / total) * 100);
-        return `<div><div class="flex justify-between text-xs text-gray-500 mb-0.5"><span class="font-semibold text-gray-700">${name}</span><span>${v.wrong} wrong / ${total} shown</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-red-400 h-2 rounded-full" style="width:${pct}%"></div></div></div>`;
+        const total = v.correct + v.wrong, wrongPct = Math.round((v.wrong / total) * 100);
+        return `<div><div class="flex justify-between text-xs text-gray-500 mb-0.5"><span class="font-semibold text-gray-700">${name}</span><span>${v.wrong} missed / ${total} total</span></div><div class="w-full bg-gray-100 rounded-full h-2"><div class="bg-red-400 h-2 rounded-full" style="width:${wrongPct}%"></div></div></div>`;
     }).join('');
-    return `<div><p class="text-sm font-bold text-gray-600 mb-2">📉 Most Missed Districts (All-time)</p><div class="space-y-2">${bars}</div></div>`;
+    return `<div><p class="text-sm font-bold text-gray-600 mb-2">📉 Most Frequent Mistakes (Cumulative)</p><div class="space-y-2">${bars}</div></div>`;
 }
 
 function maskHint(hint, locationName) {
-    const baseName = locationName.replace(/(구)$/, '');
-    const mask = '〇'.repeat(baseName.length);
-    const escaped = locationName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const baseEscaped = baseName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return hint.replace(new RegExp(escaped, 'g'), mask + locationName.slice(baseName.length)).replace(new RegExp(baseEscaped, 'g'), mask);
+    const spaceIdx = locationName.indexOf(' ');
+    const koreanName = spaceIdx !== -1 ? locationName.substring(0, spaceIdx) : locationName;
+    const englishName = spaceIdx !== -1 ? locationName.substring(spaceIdx + 1) : '';
+    
+    let result = hint;
+    if (koreanName) {
+        const baseKorean = koreanName.replace(/(구)$/, '');
+        const mask = '〇'.repeat(baseKorean.length);
+        result = result.replace(new RegExp(koreanName, 'g'), mask + (koreanName.endsWith('구') ? '구' : '')).replace(new RegExp(baseKorean, 'g'), mask);
+    }
+    if (englishName) {
+        const baseEnglish = englishName.replace(/(-gu)$/i, '');
+        const mask = '〇'.repeat(baseEnglish.length);
+        result = result.replace(new RegExp(englishName, 'gi'), mask + (englishName.toLowerCase().endsWith('-gu') ? '-gu' : '')).replace(new RegExp(baseEnglish, 'gi'), mask);
+    }
+    return result;
 }
 
 function shuffleArray(array) {
@@ -484,7 +497,7 @@ function shuffleArray(array) {
 function generateOptions(correctAnswer) {
     const options = [correctAnswer];
     const distractors = shuffleArray(locations.map(l => l.name).filter(n => n !== correctAnswer));
-    for (let i = 0; i < numOptions - 1; i++) options.push(distractors[i]);
+    for (let i = 0; i < numOptions - 1 && i < distractors.length; i++) options.push(distractors[i]);
     return shuffleArray(options);
 }
 
@@ -499,7 +512,7 @@ const detailedGuide = document.getElementById('detailed-guide');
 if (toggleGuideBtn && detailedGuide) {
     toggleGuideBtn.addEventListener('click', () => {
         const isHidden = detailedGuide.classList.contains('hidden');
-        if (isHidden) { detailedGuide.classList.remove('hidden'); toggleGuideBtn.textContent = 'Close Guide'; }
+        if (isHidden) { detailedGuide.classList.remove('hidden'); toggleGuideBtn.textContent = 'Close Detailed Guide'; }
         else { detailedGuide.classList.add('hidden'); toggleGuideBtn.textContent = 'Open Detailed Game Guide'; }
     });
 }
