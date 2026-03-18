@@ -29,11 +29,17 @@ A web-based interactive quiz game where users identify South Korean cities and S
 - **Viral Discovery**: Added a "Share Result" button at the end of the quiz that copies the score and URL to the clipboard, encouraging users to share their results.
 - **Keyword Enrichment**: Expanded the "Detailed Guide" sections with relevant keywords (e.g., 사회 공부, 공무원 지리, 25개 자치구) to capture more search traffic.
 
-### Recently UI Adjustments
+### US State Quiz Addition
+- **New Mode**: Introduced a US State Quiz (`us.html`, `us.js`) for both Korean and English versions.
+- **Data**: Coordinates and hints for all 50 US states.
+- **GeoJSON**: Integrated US State boundaries for better visualization.
+
+### Recently UI & UX Adjustments
 - **Index Page Cleanup**: Removed complex inline SVG/Base64 image data from `index.html` and replaced it with a clean reference to `korea_map.png` for better maintainability and performance.
 - **Level Selection Buttons**: Reduced vertical padding (from `py-4` to `py-2`) to streamline the main dashboard and reduce vertical scrolling on mobile devices.
 - **Hero Image Integration**: Replaced SVG map with a stylized PNG map image for better performance and visual consistency across browsers.
-- **Seoul Map Image**: Replaced the default Seoul map image in `seoul.html` with a custom local image `korea_seoul_map.png` as requested by the user.
+- **Seoul Map Image**: Replaced the default Seoul map image in `seoul.html` with a custom local image `korea_seoul_map.png`.
+- **US Quiz Zoom Level**: Increased the zoom level by 1 step (from 4 to 5) when focusing on a specific state in the US State Quiz (Korean version) to provide a better view of the target area.
 
 
 ### Steps:
