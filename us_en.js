@@ -267,6 +267,8 @@ function useHint(){
     feedbackTextElement.className='text-md font-medium text-amber-600';
 }
 
+function moveToNextQuestion(){currentQuestionIndex++;loadQuestion();}
+
 function endGame(){
     stopQuestionTimer();if(autoNextTimer)clearTimeout(autoNextTimer);if(countdownInterval)clearInterval(countdownInterval);
     const te=document.getElementById('question-timer');if(te)te.remove();
